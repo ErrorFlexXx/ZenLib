@@ -6,18 +6,17 @@
 
 namespace Utils
 {
-    template<typename T>class Vector
+    template<typename T>
+    class Vector
     {
     public:
-        Vector(size_t size = 0) :
-            m_Data(size)
-        {
-        }
+        Vector(size_t size = 0)
+            : m_Data(size)
+        {}
 
-        Vector(size_t size, T s) :
-            m_Data(size, s)
-        {
-        }
+        Vector(size_t size, T s)
+            : m_Data(size, s)
+        {}
 
         size_t size() const
         {

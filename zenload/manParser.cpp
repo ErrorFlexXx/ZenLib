@@ -4,9 +4,9 @@
 
 namespace ZenLoad
 {
-    static const float SAMPLE_ROT_BITS			= float(1 << 16) - 1.0f;
-    static const float SAMPLE_ROT_SCALER		= (float(1.0f) / SAMPLE_ROT_BITS) * 2.0f * ZMath::Pi;
-    static const float SAMPLE_QUAT_SCALER		= (1.0f / SAMPLE_ROT_BITS) * 2.1f;
+    static const float SAMPLE_ROT_BITS          = float(1 << 16) - 1.0f;
+    static const float SAMPLE_ROT_SCALER        = (float(1.0f) / SAMPLE_ROT_BITS) * 2.0f * ZMath::Pi;
+    static const float SAMPLE_QUAT_SCALER       = (1.0f / SAMPLE_ROT_BITS) * 2.1f;
     static const uint16_t SAMPLE_QUAT_MIDDLE    = (1 << 15) - 1;
 
     ManParser::ManParser(ZenParser &zen)
