@@ -1,24 +1,25 @@
 #pragma once
+
 #include <stddef.h>
 
 namespace ZMemory
 {
-/**
- * List supporting finding, obtaining and returning free list elements in O(1) time
- */
+    /**
+     * List supporting finding, obtaining and returning free list elements in O(1) time
+     */
     template<typename T>
     class FreeList
     {
     public:
-        FreeList(T* start, T* end, size_t elementSize, size_t numElements, size_t alignment, size_t offset)
+        FreeList(T *start, T *end, size_t elementSize, size_t numElements, size_t alignment, size_t offset)
         {
             // TODO: Implement alignment and offset
 
             union
             {
-                T* as_T;
-                char* as_char;
-                FreeList* as_self;
+                T *as_T;
+                char *as_char;
+                FreeList *as_self;
             };
 
             // Assign start of the list to the union
@@ -46,12 +47,12 @@ namespace ZMemory
         /**
          * Returns the next free element from the list
          */
-        inline T* obtainElement()
+        inline T *obtainElement()
         {
             if (!m_Next)
                 return nullptr; // Out of space
 
-            FreeList* head = m_Next;
+            FreeList *head = m_Next;
             m_Next = head->m_Next;
 
             m_NumObtainedElements++;
@@ -62,7 +63,7 @@ namespace ZMemory
         /**
          * Marks the given list-element as free again
          */
-        inline void returnElement(T* ptr)
+        inline void returnElement(T *ptr)
         {
             FreeList* newHead = reinterpret_cast<FreeList*>(ptr);
             newHead->m_Next = m_Next;
@@ -80,7 +81,7 @@ namespace ZMemory
         }
 
     private:
-        FreeList* m_Next;
+        FreeList *m_Next;
         size_t m_NumObtainedElements;
     };
-}
+} //namespace ZMemory

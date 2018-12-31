@@ -1,6 +1,5 @@
 // FIXME: COMPATIBILITY FOR MASTER - REMOVE LATER! (Complete file)
 
-
 #include "zCModelAni.h"
 #include "zenParser.h"
 #include "utils/logger.h"
@@ -12,19 +11,19 @@
 
 using namespace ZenLoad;
 
-static const uint16_t MSID_MESHSOFTSKIN = 0xE100;
+static const uint16_t MSID_MESHSOFTSKIN     = 0xE100;
 static const uint16_t MSID_MESHSOFTSKIN_END = 0xE110;
 
-static const uint16_t MSID_MODELANI = 0xA000;
-static const uint16_t MSID_MAN_HEADER = 0xA020;
-static const uint16_t MSID_MAN_SOURCE = 0xA010;
-static const uint16_t MSID_MAN_ANIEVENTS = 0xA030;
-static const uint16_t MSID_MAN_RAWDATA = 0xA090;
+static const uint16_t MSID_MODELANI         = 0xA000;
+static const uint16_t MSID_MAN_HEADER       = 0xA020;
+static const uint16_t MSID_MAN_SOURCE       = 0xA010;
+static const uint16_t MSID_MAN_ANIEVENTS    = 0xA030;
+static const uint16_t MSID_MAN_RAWDATA      = 0xA090;
 
-static const float SAMPLE_ROT_BITS			= float(1 << 16) - 1.0f;
-static const float SAMPLE_ROT_SCALER		= (float(1.0f) / SAMPLE_ROT_BITS) * 2.0f * ZMath::Pi;
-static const float SAMPLE_QUAT_SCALER		= (1.0f / SAMPLE_ROT_BITS) * 2.1f;
-static const uint16_t SAMPLE_QUAT_MIDDLE      = (1 << 15) - 1;
+static const float SAMPLE_ROT_BITS          = float(1 << 16) - 1.0f;
+static const float SAMPLE_ROT_SCALER        = (float(1.0f) / SAMPLE_ROT_BITS) * 2.0f * ZMath::Pi;
+static const float SAMPLE_QUAT_SCALER       = (1.0f / SAMPLE_ROT_BITS) * 2.1f;
+static const uint16_t SAMPLE_QUAT_MIDDLE    = (1 << 15) - 1;
 
 void zCModelAni::zCModelAniEvent::load(ZenParser& parser)
 {
@@ -41,14 +40,14 @@ void zCModelAni::zCModelAniEvent::load(ZenParser& parser)
     prob = parser.readBinaryFloat();
 }
 
-void SampleUnpackTrans(const uint16_t* in, ZMath::float3& out, float samplePosScaler, float samplePosRangeMin)
+void SampleUnpackTrans(const uint16_t *in, ZMath::float3 &out, float samplePosScaler, float samplePosRangeMin)
 {
     out.x = float(in[0]) * samplePosScaler + samplePosRangeMin;
     out.y = float(in[1]) * samplePosScaler + samplePosRangeMin;
     out.z = float(in[2]) * samplePosScaler + samplePosRangeMin;
-};
+}
 
-void SampleUnpackQuat(const uint16_t* in, ZMath::float4& out)
+void SampleUnpackQuat(const uint16_t *in, ZMath::float4 &out)
 {
     out.x = (int(in[0]) - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALER;
     out.y = (int(in[1]) - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALER;
@@ -68,14 +67,10 @@ void SampleUnpackQuat(const uint16_t* in, ZMath::float4& out)
     {
         out.w = sqrt(1.0f - len_q);
     }
-};
+}
 
-/**
-* @brief Loads the animation from the given VDF-Archive
-*/
-zCModelAni::zCModelAni(const std::string& fileName, const VDFS::FileIndex& fileIndex, float scale)
+zCModelAni::zCModelAni(const std::string &fileName, const VDFS::FileIndex &fileIndex, float scale)
 {
-
     m_ModelAniHeader.version = 0;
 
     std::vector<uint8_t> data;
@@ -108,10 +103,7 @@ zCModelAni::zCModelAni(const std::string& fileName, const VDFS::FileIndex& fileI
     }
 }
 
-/**
-* @brief Reads the mesh-object from the given binary stream
-*/
-void zCModelAni::readObjectData(ZenParser& parser)
+void zCModelAni::readObjectData(ZenParser &parser)
 {
     // Information about the whole file we are reading here
     BinaryFileInfo fileInfo;
@@ -130,8 +122,6 @@ void zCModelAni::readObjectData(ZenParser& parser)
         parser.readStructure(chunkInfo);
 
         size_t chunkEnd = parser.getSeek() + chunkInfo.length;
-
-
 
         switch(chunkInfo.id)
         {
@@ -157,16 +147,18 @@ void zCModelAni::readObjectData(ZenParser& parser)
                 parser.setSeek(chunkEnd); // Skip chunk
                 break;
 
-            case MSID_MAN_ANIEVENTS: {
+            case MSID_MAN_ANIEVENTS:
+            {
                 uint32_t numAniEvents = parser.readBinaryDWord();
                 m_AniEvents.resize(numAniEvents);
 
                 for(uint32_t i = 0; i < numAniEvents; i++)
                     m_AniEvents[i].load(parser);
             }
-                break;
+            break;
 
-            case MSID_MAN_RAWDATA: {
+            case MSID_MAN_RAWDATA:
+            {
                 m_ModelAniHeader.nodeChecksum = parser.readBinaryDWord();
 
                 m_NodeIndexList.resize(m_ModelAniHeader.numNodes);
@@ -187,7 +179,8 @@ void zCModelAni::readObjectData(ZenParser& parser)
 
                 delete[] qSamples;
             }
-                break;
+            break;
+
             default:
                 parser.setSeek(chunkEnd); // Skip chunk
 

@@ -9,10 +9,10 @@
 
 using namespace ZenLoad;
 
-static const uint16_t MMID_MMB_HEADER = 0xE020;
+static const uint16_t MMID_MMB_HEADER  = 0xE020;
 static const uint16_t MMID_MMB_ANILIST = 0xE030;
 
-zCMorphMesh::zCMorphMesh(const std::string& fileName, const VDFS::FileIndex& fileIndex)
+zCMorphMesh::zCMorphMesh(const std::string &fileName, const VDFS::FileIndex &fileIndex)
 {
     std::vector<uint8_t> data;
     fileIndex.getFileData(fileName, data);
@@ -35,10 +35,7 @@ zCMorphMesh::zCMorphMesh(const std::string& fileName, const VDFS::FileIndex& fil
     }
 }
 
-/**
-* @brief Reads the mesh-object from the given binary stream
-*/
-void zCMorphMesh::readObjectData(ZenParser& parser)
+void zCMorphMesh::readObjectData(ZenParser &parser)
 {
     // Information about the whole file we are reading here
     BinaryFileInfo fileInfo;
@@ -85,7 +82,6 @@ void zCMorphMesh::readObjectData(ZenParser& parser)
 
             default:
                 parser.setSeek(chunkEnd); // Skip chunk
-
         }
     }
 }

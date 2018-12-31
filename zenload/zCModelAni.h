@@ -1,4 +1,5 @@
 #pragma once
+
 #include <functional>
 #include <string>
 #include <vector>
@@ -61,10 +62,10 @@ namespace VDFS
 namespace ZenLoad
 {
     class ZenParser;
+
     class zCModelAni
     {
     public:
-
         struct zCModelAniEvent
         {
             enum { ANIEVENT_MAXSTRING = 4 };
@@ -106,38 +107,38 @@ namespace ZenLoad
             ZMath::float3 position;
         };
 
-        zCModelAni(){}
+        zCModelAni() {}
 
         /**
-        * @brief Loads the mesh from the given VDF-Archive
-        */
-        zCModelAni(const std::string& fileName, const VDFS::FileIndex& fileIndex, float scale = 1.0f);
+         * @brief Loads the mesh from the given VDF-Archive
+         */
+        zCModelAni(const std::string &fileName, const VDFS::FileIndex &fileIndex, float scale = 1.0f);
 
         /**
          * @brief Reads the mesh-object from the given binary stream
          * @param fromZen Whether this mesh is supposed to be read from a zenfile. In this case, information about the binary chunk is also read.
          */
-        void readObjectData(ZenParser& parser);
+        void readObjectData(ZenParser &parser);
 
         /**
          * @return generic information about this animation
          */
-        const ModelAniHeader& getModelAniHeader() const { return m_ModelAniHeader; }
+        const ModelAniHeader &getModelAniHeader() const { return m_ModelAniHeader; }
 
         /**
          * @return Animation-data. Access: sampleIdx * numNodes + node
          */
-        const std::vector<AniSample>& getAniSamples() const { return m_AniSamples; }
+        const std::vector<AniSample> &getAniSamples() const { return m_AniSamples; }
 
         /**
          * @return Indices of the samples to the actual nodes
          */
-        const std::vector<uint32_t>& getNodeIndexList() const { return m_NodeIndexList; }
+        const std::vector<uint32_t> &getNodeIndexList() const { return m_NodeIndexList; }
 
         /**
          * @return Whether the animation was correctly loaded
          */
-        bool isValid(){ return m_ModelAniHeader.version != 0; }
+        bool isValid() { return m_ModelAniHeader.version != 0; }
 
     private:
         /**
@@ -152,5 +153,5 @@ namespace ZenLoad
 
         std::vector<uint32_t> m_NodeIndexList;
         std::vector<AniSample> m_AniSamples;
-    };
-}
+    }; //class zCModelAni
+} //namespace ZenLoad

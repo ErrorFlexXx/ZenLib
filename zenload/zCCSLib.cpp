@@ -9,7 +9,7 @@
 
 using namespace ZenLoad;
 
-zCCSLib::zCCSLib(const std::string& fileName, const VDFS::FileIndex& fileIndex)
+zCCSLib::zCCSLib(const std::string &fileName, const VDFS::FileIndex &fileIndex)
 {
     std::vector<uint8_t> data;
     fileIndex.getFileData(fileName, data);
@@ -33,7 +33,7 @@ zCCSLib::zCCSLib(const std::string& fileName, const VDFS::FileIndex& fileIndex)
 }
 
 
-zCCSLib::zCCSLib(const std::string& file)
+zCCSLib::zCCSLib(const std::string &file)
 {
     try
     {
@@ -51,9 +51,9 @@ zCCSLib::zCCSLib(const std::string& file)
 }
 
 
-void zCCSLib::readObjectData(ZenParser& parser)
+void zCCSLib::readObjectData(ZenParser &parser)
 {
-    zCCSLibData& info = m_Data;
+    zCCSLibData &info = m_Data;
 
     parser.readHeader();
 
@@ -95,14 +95,14 @@ void zCCSLib::readObjectData(ZenParser& parser)
                 ZenParser::ChunkHeader messageHeader;
                 parser.readChunkStart(messageHeader);
 
-				/*parser.getImpl()->readEntry("subtype", &blk.atomicBlockData.command.subType, 1, ZenLoad::ParserImpl::ZVT_ENUM);
-				parser.getImpl()->readEntry("text", &blk.atomicBlockData.command.text, 0, ZenLoad::ParserImpl::ZVT_STRING);
-				parser.getImpl()->readEntry("name", &blk.atomicBlockData.command.name, 0, ZenLoad::ParserImpl::ZVT_STRING);*/
+                /*parser.getImpl()->readEntry("subtype", &blk.atomicBlockData.command.subType, 1, ZenLoad::ParserImpl::ZVT_ENUM);
+                parser.getImpl()->readEntry("text", &blk.atomicBlockData.command.text, 0, ZenLoad::ParserImpl::ZVT_STRING);
+                parser.getImpl()->readEntry("name", &blk.atomicBlockData.command.name, 0, ZenLoad::ParserImpl::ZVT_STRING);*/
 
                 ReadObjectProperties(parser, blk.atomicBlockData.properties,
                                      Prop("subType", blk.atomicBlockData.command.subType),
-                                          Prop("text", blk.atomicBlockData.command.text),
-                                          Prop("name", blk.atomicBlockData.command.name));
+                                     Prop("text", blk.atomicBlockData.command.text),
+                                     Prop("name", blk.atomicBlockData.command.name));
 
                 //LogInfo() << "Read message: " << blk.atomicBlockData.command.name;
 
@@ -115,19 +115,19 @@ void zCCSLib::readObjectData(ZenParser& parser)
         }
         //parser.skipChunk();
 
-		parser.readChunkEnd();
+        parser.readChunkEnd();
 
         info.blocks.push_back(blk.atomicBlockData);
 
         auto nameUppered = blk.blockName;
         std::transform(nameUppered.begin(), nameUppered.end(), nameUppered.begin(), ::toupper);
         //LogInfo() << "message = " << blk.blockName;
-        m_MessagesByName[nameUppered] = info.blocks.size()-1;
+        m_MessagesByName[nameUppered] = info.blocks.size() - 1;
     }
 
 }
 
-const oCMsgConversationData& zCCSLib::getMessageByName(const std::string& name)
+const oCMsgConversationData& zCCSLib::getMessageByName(const std::string &name)
 {
     auto nameUppered = name;
     std::transform(nameUppered.begin(), nameUppered.end(), nameUppered.begin(), ::toupper);
@@ -136,7 +136,7 @@ const oCMsgConversationData& zCCSLib::getMessageByName(const std::string& name)
     return m_Data.blocks[idx].command;
 }
 
-bool zCCSLib::messageExists(const std::string& name) const
+bool zCCSLib::messageExists(const std::string &name) const
 {
     auto nameUppered = name;
     std::transform(nameUppered.begin(), nameUppered.end(), nameUppered.begin(), ::toupper);

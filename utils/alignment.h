@@ -1,4 +1,5 @@
 #pragma once
+
 #include <inttypes.h>
 #include <string.h>
 
@@ -17,20 +18,21 @@ namespace Utils
     typedef int16_t unaligned_int16;
     typedef float unaligned_float;
 #endif
-	/**
-	 * @brief performs an unaligned memory-access
-	 */
-	template<typename T>
-	static void getUnaligned(T* dst, const void* src)
-	{
-		memcpy(dst, src, sizeof(T));
-	}
+
+    /**
+     * @brief performs an unaligned memory-access
+     */
+    template<typename T>
+    static void getUnaligned(T *dst, const void *src)
+    {
+        memcpy(dst, src, sizeof(T));
+    }
 
     template<typename T>
-    void unalignedRead(T& dst, const void*& src)
+    void unalignedRead(T &dst, const void *&src)
     {
         getUnaligned(&dst, src);
-        uint8_t*& ptr = ((uint8_t*&)src);
+        uint8_t *&ptr = ((uint8_t*&)src);
         ptr += sizeof(T);
     }
-}
+} //namespace Utils

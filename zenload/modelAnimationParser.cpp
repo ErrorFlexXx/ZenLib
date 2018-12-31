@@ -61,14 +61,14 @@ void ModelAnimationParser::readHeader()
     m_Header.nextAniName = m_Zen.readLine(true);
 }
 
-static void SampleUnpackTrans(const uint16_t* in, ZMath::float3& out, float samplePosScaler, float samplePosRangeMin)
+static void SampleUnpackTrans(const uint16_t *in, ZMath::float3 &out, float samplePosScaler, float samplePosRangeMin)
 {
     out.x = float(in[0]) * samplePosScaler + samplePosRangeMin;
     out.y = float(in[1]) * samplePosScaler + samplePosRangeMin;
     out.z = float(in[2]) * samplePosScaler + samplePosRangeMin;
 }
 
-static void SampleUnpackQuat(const uint16_t* in, ZMath::float4& out)
+static void SampleUnpackQuat(const uint16_t *in, ZMath::float4 &out)
 {
     out.x = (int(in[0]) - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALER;
     out.y = (int(in[1]) - SAMPLE_QUAT_MIDDLE) * SAMPLE_QUAT_SCALER;

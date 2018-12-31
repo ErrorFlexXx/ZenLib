@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include "zTypes.h"
 #include <map>
 
@@ -14,10 +15,10 @@ namespace VDFS
 namespace ZenLoad
 {
     class ZenParser;
+
     class zCFont
     {
     public:
-
         /**
          * Max number of letters that a font can have (file format limitation)
          */
@@ -41,30 +42,31 @@ namespace ZenLoad
             ZMath::float2 fontUV2[FONT_NUM_MAX_LETTERS]; // Bottom-right corner
         };
 
-        zCFont(const std::string& fileName, const VDFS::FileIndex& fileIndex);
+        zCFont(const std::string &fileName, const VDFS::FileIndex &fileIndex);
+
         virtual ~zCFont();
 
         /**
          * @return Whether this font was correctly loaded
          */
-        bool isValid(){ return m_Info.fontHeight != 0; }
+        bool isValid() { return m_Info.fontHeight != 0; }
 
         /**
          * @return Information loaded from the font-file
          */
-        const FontInfo& getFontInfo(){ return m_Info; }
-    protected:
+        const FontInfo &getFontInfo() { return m_Info; }
 
+    protected:
         /**
          * Parses a .FNT-File given as a binary blob
          * @param fntData .FNT-File given as a binary blob
          * @return Success
          */
-        bool parseFNTData(const std::vector<uint8_t>& fntData);
+        bool parseFNTData(const std::vector<uint8_t> &fntData);
 
         // Everything found in the FNT-file
         FontInfo m_Info;
-    };
-}
+    }; //class zCFont
+} //namespace ZenLoad
 
 

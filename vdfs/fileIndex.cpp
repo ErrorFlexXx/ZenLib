@@ -52,10 +52,7 @@ void FileIndex::initVDFS(const char *argv0)
     internal::argv0 = argv0;
 }
 
-/**
-* @brief Loads a VDF-File and initializes everything
-*/
-bool FileIndex::loadVDF(const std::string& vdf, uint32_t priority, const std::string& mountPoint)
+bool FileIndex::loadVDF(const std::string &vdf, uint32_t priority, const std::string &mountPoint)
 {
     assert(!isFinalized());
 
@@ -74,7 +71,7 @@ bool FileIndex::loadVDF(const std::string& vdf, uint32_t priority, const std::st
     return true;
 }
 
-bool FileIndex::mountFolder(const std::string& path, const std::string& mountPoint)
+bool FileIndex::mountFolder(const std::string &path, const std::string &mountPoint)
 {
     if (!PHYSFS_mount(path.c_str(), mountPoint.c_str(), 1))
     {
@@ -85,10 +82,7 @@ bool FileIndex::mountFolder(const std::string& path, const std::string& mountPoi
     return true;
 }
 
-/**
-* @brief Fills a vector with the data of the given file
-*/
-bool FileIndex::getFileData(const std::string& file, std::vector<uint8_t>& data) const
+bool FileIndex::getFileData(const std::string &file, std::vector<uint8_t> &data) const
 {
     assert(isFinalized());
 
@@ -116,14 +110,14 @@ bool FileIndex::getFileData(const std::string& file, std::vector<uint8_t>& data)
     return true;
 }
 
-bool FileIndex::hasFile(const std::string& name) const
+bool FileIndex::hasFile(const std::string &name) const
 {
     assert(isFinalized());
 
     return findCaseSensitiveNameOf(name) != "";
 }
 
-int64_t VDFS::FileIndex::getLastModTime(const std::string& name)
+int64_t VDFS::FileIndex::getLastModTime(const std::string &name)
 {
     int64_t result = -1;
     std::ifstream infile(name);
@@ -167,7 +161,7 @@ int64_t VDFS::FileIndex::getLastModTime(const std::string& name)
     return result;
 }
 
-std::vector<std::string> FileIndex::getKnownFiles(const std::string& path) const
+std::vector<std::string> FileIndex::getKnownFiles(const std::string &path) const
 {
     std::string filePath(path);
     std::vector<std::string> vec;
@@ -189,7 +183,7 @@ void FileIndex::updateUpperedFilenamesMap()
     std::vector<std::string> files = getKnownFiles();
 
     m_FilenamesByUpperedFileNames.clear();
-    for (const std::string& file : files)
+    for (const std::string &file : files)
     {
         std::string uppered = file;
         std::transform(uppered.begin(), uppered.end(), uppered.begin(), ::toupper);
@@ -198,7 +192,7 @@ void FileIndex::updateUpperedFilenamesMap()
     }
 }
 
-std::string FileIndex::findCaseSensitiveNameOf(const std::string& caseInsensitiveName) const
+std::string FileIndex::findCaseSensitiveNameOf(const std::string &caseInsensitiveName) const
 {
     assert(isFinalized());
 

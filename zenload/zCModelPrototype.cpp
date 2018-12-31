@@ -44,7 +44,7 @@ enum class EIdxRegisterMesh
  * @param _line line to parse
  * @return Vector of all parameters as strings
  */
-std::vector<std::string> splitDecl(const std::string& _line)
+std::vector<std::string> splitDecl(const std::string &_line)
 {
     // Example: registerMesh ("Gob_Body.ASC")
     // Example: ani			("s_FistRun"					1	"s_FistRun"			0.1	0.1	M.	"Gob_1hRunAmbient_M01.asc"	F	0	30	FPS:10)
@@ -53,7 +53,7 @@ std::vector<std::string> splitDecl(const std::string& _line)
     std::vector<std::string> out;
     out.push_back("");
     bool inArg = true;
-    for(auto& c : _line)
+    for(auto &c : _line)
     {
         if(c == ' ' || c == '\t' || c == '(')
         {
@@ -80,7 +80,7 @@ std::vector<std::string> splitDecl(const std::string& _line)
     return out;
 }
 
-zCModelPrototype::zCModelPrototype(const std::string& fileName, const VDFS::FileIndex& fileIndex)
+zCModelPrototype::zCModelPrototype(const std::string &fileName, const VDFS::FileIndex &fileIndex)
 {
     std::vector<uint8_t> data;
     fileIndex.getFileData(fileName, data);
@@ -103,10 +103,7 @@ zCModelPrototype::zCModelPrototype(const std::string& fileName, const VDFS::File
     }
 }
 
-/**
-* @brief Reads the mesh-object from the given binary stream
-*/
-void zCModelPrototype::readObjectData(ZenParser& parser)
+void zCModelPrototype::readObjectData(ZenParser &parser)
 {
     // TODO: Implement G2-Variant of this
 
@@ -122,8 +119,8 @@ void zCModelPrototype::readObjectData(ZenParser& parser)
     /**
      * Ani enum
      */
-    auto readAniEnum = [&]() {
-
+    auto readAniEnum = [&]()
+    {
         while (parser.getSeek() < parser.getFileSize())
         {
             std::string line = parser.readLine(true);
@@ -142,7 +139,7 @@ void zCModelPrototype::readObjectData(ZenParser& parser)
     /**
      * Register mesh
      */
-    auto readRegisterMesh = [&](const std::string& line) {
+    auto readRegisterMesh = [&](const std::string &line) {
         std::vector<std::string> args = splitDecl(line);
 
         LogInfo() << "Args: " << args;
@@ -151,7 +148,7 @@ void zCModelPrototype::readObjectData(ZenParser& parser)
     /**
      * Ani
      */
-    auto readAni = [&](const std::string& line) {
+    auto readAni = [&](const std::string &line) {
         std::vector<std::string> args = splitDecl(line);
 
         LogInfo() << "Args: " << args;

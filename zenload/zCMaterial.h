@@ -6,7 +6,8 @@
 
 namespace ZenLoad
 {
-    enum class MaterialGroup : int {
+    enum class MaterialGroup : int
+    {
         UNDEF	= 0	,
         METAL,
         STONE,
@@ -30,7 +31,6 @@ namespace ZenLoad
     class zCMaterial
     {
     public:
-
         /**
          * Converts the given material-group enum value to the regarding string
          */
@@ -47,7 +47,7 @@ namespace ZenLoad
         /**
          * Reads this object from an internal zen
          */
-        static zCMaterialData readObjectData(ZenParser& parser, uint16_t version = 0)
+        static zCMaterialData readObjectData(ZenParser &parser, uint16_t version = 0)
         {
             // Read everything the material has to offer
             zCMaterialData materialInfo;
@@ -71,7 +71,8 @@ namespace ZenLoad
                                      Prop("LoadDontCollapse", materialInfo.loadDontCollapse),
                                      Prop("DetailObject", materialInfo.detailObject),
                                      Prop("DefaultMapping", materialInfo.defaultMapping));
-            } else
+            }
+            else
             {
                 ReadObjectProperties(parser, materialInfo.properties,
                                      Prop("MaterialName", materialInfo.matName),
@@ -101,11 +102,7 @@ namespace ZenLoad
 
             }
 
-
             return materialInfo;
         }
-
-    private:
-    };
-
-}
+    }; //class zCMaterial
+} //namespace ZenLoad

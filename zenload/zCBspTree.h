@@ -9,10 +9,10 @@
 namespace ZenLoad
 {
     class ZenParser;
+
     class zCBspTree
     {
     public:
-
         enum EVersion
         {
             Gothic_26f = 0, // TODO
@@ -21,18 +21,18 @@ namespace ZenLoad
 
         enum EBspChunk
         {
-            CHUNK_BSP = 0xC000,
-            CHUNK_BSP_POLYLIST = 0xC010,
-            CHUNK_BSP_TREE = 0xC040,
-            CHUNK_BSP_LEAF_LIGHT = 0xC045,
-            CHUNK_BSP_OUTDOOR_SECTORS = 0xC050,
-            CHUNK_BSP_END = 0xC0FF,
+            CHUNK_BSP                   = 0xC000,
+            CHUNK_BSP_POLYLIST          = 0xC010,
+            CHUNK_BSP_TREE              = 0xC040,
+            CHUNK_BSP_LEAF_LIGHT        = 0xC045,
+            CHUNK_BSP_OUTDOOR_SECTORS   = 0xC050,
+            CHUNK_BSP_END               = 0xC0FF,
         };
 
         /**
-        * Reads this object from an internal zen
-        */
-        static zCBspTreeData readObjectData(ZenParser& parser, zCMesh* mesh)
+         * Reads this object from an internal zen
+         */
+        static zCBspTreeData readObjectData(ZenParser &parser, zCMesh *mesh)
         {
             zCBspTreeData info;
 
@@ -80,9 +80,8 @@ namespace ZenLoad
                         // Convert these to size_t
                         for(volatile uint32_t i=0;i<numPolys;i++)
                             info.treePolyIndices[i] = static_cast<size_t>(parser.readBinaryDWord());
-
-                    }
                         break;
+                    }
 
                     case CHUNK_BSP_TREE:
                     {
@@ -108,7 +107,7 @@ namespace ZenLoad
                             size_t idx = info.nodes.size() - 1;
                             //LogInfo() << " - Reading node " << idx;
 
-                            zCBspNode& n = info.nodes[idx];
+                            zCBspNode &n = info.nodes[idx];
 
                             parser.readStructure(n.bbox3dMin);
                             parser.readStructure(n.bbox3dMax);
@@ -160,7 +159,7 @@ namespace ZenLoad
                                     n.front = info.nodes.size();
                                     info.nodes.emplace_back();
 
-                                    zCBspNode& front = info.nodes[n.front];
+                                    zCBspNode &front = info.nodes[n.front];
 
                                     // Set new nodes parent
                                     front.parent = idx;
@@ -199,8 +198,8 @@ namespace ZenLoad
                         };
 
                         loadRec(true);
-                    }
                         break;
+                    }
 
                     case CHUNK_BSP_LEAF_LIGHT:
                         parser.setSeek(chunkEnd); // Skip chunk
@@ -244,23 +243,19 @@ namespace ZenLoad
          * @return List of indices to polygons, which are not LOD-Polygons. These are the
          *         actual indices of the polygons inside the mesh.
          */
-        static std::vector<size_t> getNonLodPolygons(const zCBspTreeData& d)
+        static std::vector<size_t> getNonLodPolygons(const zCBspTreeData &d)
         {
             std::vector<size_t> r;
 
             for(size_t nidx : d.leafIndices)
             {
-                const zCBspNode& n = d.nodes[nidx];
+                const zCBspNode &n = d.nodes[nidx];
 
                 for(size_t i=n.treePolyIndex; i<n.treePolyIndex + n.numPolys; i++)
                     r.push_back(d.treePolyIndices[i]);
             }
 
-
-
             return r;
         }
-
-    private:
-    };
-}
+    }; //class zCBspTree
+} //namespace ZenLoad

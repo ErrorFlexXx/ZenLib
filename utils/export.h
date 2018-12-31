@@ -1,4 +1,5 @@
 #pragma once
+
 #include <zenload/zTypes.h>
 
 namespace Utils
@@ -10,7 +11,7 @@ namespace Utils
      * @param name Name of the object to export
      * @return Whether the export succeeded
      */
-    inline bool exportPackedMeshToObj(ZenLoad::PackedMesh& mesh, const std::string& file, const std::string& name="Object")
+    inline bool exportPackedMeshToObj(ZenLoad::PackedMesh &mesh, const std::string &file, const std::string &name = "Object")
     {
         FILE* f = fopen(file.c_str(), "w");
 
@@ -21,26 +22,26 @@ namespace Utils
         fputs(("o " + name + "\n").c_str(), f);
 
         // Write positions
-        for(auto& v : mesh.vertices)
+        for(auto &v : mesh.vertices)
         {
             fputs(("v " + std::to_string(v.Position.x) + " "
-                      + std::to_string(v.Position.y) + " "
-                      + std::to_string(v.Position.z) + "\n").c_str(), f);
+                   + std::to_string(v.Position.y) + " "
+                   + std::to_string(v.Position.z) + "\n").c_str(), f);
         }
 
         // Write texture coords
-        for(auto& v : mesh.vertices)
+        for(auto &v : mesh.vertices)
         {
             fputs(("v " + std::to_string(v.TexCoord.x) + " "
-                      + std::to_string(v.TexCoord.y) + "\n").c_str(), f);
+                   + std::to_string(v.TexCoord.y) + "\n").c_str(), f);
         }
 
         // Write normals
-        for(auto& v : mesh.vertices)
+        for(auto &v : mesh.vertices)
         {
             fputs(("v " + std::to_string(v.Normal.x) + " "
-                      + std::to_string(v.Normal.y) + " "
-                      + std::to_string(v.Normal.z) + "\n").c_str(), f);
+                   + std::to_string(v.Normal.y) + " "
+                   + std::to_string(v.Normal.z) + "\n").c_str(), f);
         }
 
         
@@ -64,15 +65,15 @@ namespace Utils
         }
 
         // Write mtl
-        FILE* mf = fopen((file + ".mtl").c_str(), "w");
+        FILE *mf = fopen((file + ".mtl").c_str(), "w");
         
         if(!mf)
             return false;
         
-        for(auto& s : mesh.subMeshes)
+        for(auto &s : mesh.subMeshes)
         {
             fputs(("newmtl " + s.material.matName + "\n").c_str(), mf);
-        
+
             fputs(("map_Kd " + s.material.texture + "\n").c_str(), mf);
 
             
@@ -90,4 +91,4 @@ namespace Utils
         
         return true;
     }
-}
+} //namespace Utils

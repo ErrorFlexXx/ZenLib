@@ -1,4 +1,5 @@
 #pragma once
+
 #include <vector>
 #include "utils/mathlib.h"
 #include "zTypes.h"
@@ -11,10 +12,10 @@ namespace VDFS
 namespace ZenLoad
 {
     class ZenParser;
+
     class zCModelPrototype
     {
     public:
-
         struct Animation
         {
             std::string animationName;
@@ -37,18 +38,18 @@ namespace ZenLoad
             int startFrame, endFrame;
         };
 
-        zCModelPrototype(){}
+        zCModelPrototype() {}
 
         /**
-		 * @brief Loads the mesh from the given VDF-Archive
-		 */
-        zCModelPrototype(const std::string& fileName, const VDFS::FileIndex& fileIndex);
+         * @brief Loads the mesh from the given VDF-Archive
+         */
+        zCModelPrototype(const std::string &fileName, const VDFS::FileIndex &fileIndex);
 
         /**
          * @brief Reads the mesh-object from the given binary stream
          * @param fromZen Whether this mesh is supposed to be read from a zenfile. In this case, information about the binary chunk is also read.
          */
-        void readObjectData(ZenParser& parser);
+        void readObjectData(ZenParser &parser);
 
         /**
          * @return List of animations registered here
@@ -57,8 +58,8 @@ namespace ZenLoad
         {
             return m_Animations;
         }
-    private:
 
+    private:
         std::vector<Animation> m_Animations;
-    };
-}
+    }; //class zCModelPrototype
+} //namespace ZenLoad

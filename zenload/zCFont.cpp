@@ -10,7 +10,7 @@
 
 using namespace ZenLoad;
 
-zCFont::zCFont(const std::string& fileName, const VDFS::FileIndex& fileIndex)
+zCFont::zCFont(const std::string &fileName, const VDFS::FileIndex &fileIndex)
 {
     std::string fntFile = fileName;
     std::transform(fntFile.begin(), fntFile.end(), fntFile.begin(), ::tolower);
@@ -30,11 +30,9 @@ zCFont::zCFont(const std::string& fileName, const VDFS::FileIndex& fileIndex)
 }
 
 zCFont::~zCFont()
-{
+{}
 
-}
-
-bool zCFont::parseFNTData(const std::vector<uint8_t>& fntData)
+bool zCFont::parseFNTData(const std::vector<uint8_t> &fntData)
 {
     try
     {
