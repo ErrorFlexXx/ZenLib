@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <utils/string.h>
 #include "utils/mathlib.h"
 #include "zTypes.h"
 #include "zenParser.h"
@@ -22,7 +23,7 @@ namespace ZenLoad
         /**
          * @brief Loads the mesh from the given VDF-Archive
          */
-        zCMesh(const std::string &fileName, VDFS::FileIndex &fileIndex);
+        zCMesh(const Utils::String &fileName, VDFS::FileIndex &fileIndex);
 
         /**
          * @brief Reads the mesh-object from the given binary stream

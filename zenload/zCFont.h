@@ -5,6 +5,7 @@
 #pragma once
 
 #include "zTypes.h"
+#include <utils/string.h>
 #include <map>
 
 namespace VDFS
@@ -35,14 +36,14 @@ namespace ZenLoad
                 memset(glyphWidth, 0, sizeof(glyphWidth));
             }
 
-            std::string fontName; // Name of the font-file?
+            Utils::String fontName; // Name of the font-file?
             uint32_t fontHeight;  // Height of the glyphs
             uint8_t glyphWidth[FONT_NUM_MAX_LETTERS]; // Widths of the single glyphs
             ZMath::float2 fontUV1[FONT_NUM_MAX_LETTERS]; // Top-left corner
             ZMath::float2 fontUV2[FONT_NUM_MAX_LETTERS]; // Bottom-right corner
         };
 
-        zCFont(const std::string &fileName, const VDFS::FileIndex &fileIndex);
+        zCFont(const Utils::String &fileName, const VDFS::FileIndex &fileIndex);
 
         virtual ~zCFont();
 

@@ -2,12 +2,12 @@
 #include "zenParser.h"
 #include "utils/logger.h"
 #include "zTypes.h"
-#include <string>
 #include "vdfs/fileIndex.h"
 #include "zCMaterial.h"
 #include <algorithm>
 
 using namespace ZenLoad;
+using namespace Utils;
 
 static const uint16_t zCPROGMESH_FILE_VERS_G2   = 0x0905;
 static const uint16_t MSID_PROGMESH             = 0xB100;
@@ -39,7 +39,7 @@ struct MeshOffsetsSubMesh
     MeshDataEntry edgeScoreList;
 };
 
-zCProgMeshProto::zCProgMeshProto(const std::string &fileName, const VDFS::FileIndex &fileIndex)
+zCProgMeshProto::zCProgMeshProto(const String &fileName, const VDFS::FileIndex &fileIndex)
 {
     std::vector<uint8_t> data;
     fileIndex.getFileData(fileName, data);
@@ -125,8 +125,8 @@ void zCProgMeshProto::readObjectData(ZenParser &parser)
                     p2.skipSpaces();
 
                     // Skip chunk-header
-                    std::string name = p2.readLine();
-                    std::string classname = p2.readLine();
+                    String name = p2.readLine();
+                    String classname = p2.readLine();
 
                     // Save into vector
                     m_Materials.emplace_back(zCMaterial::readObjectData(p2, version));

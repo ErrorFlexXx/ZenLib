@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
+#include <utils/string.h>
 
 namespace ZenLoad
 {
@@ -30,13 +30,13 @@ namespace ZenLoad
     struct zCModelScriptAni
     {
         /// Add + ".MAN" for the animation data
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
         float m_BlendIn = 0;
         float m_BlendOut = 0;
         uint32_t m_Flags = 0;
-        std::string m_Asc;
+        Utils::String m_Asc;
         EModelScriptAniDir m_Dir = MSB_FORWARD;
         int32_t m_FirstFrame = 0;
         int32_t m_LastFrame = 0;
@@ -48,60 +48,60 @@ namespace ZenLoad
     struct zCModelScriptAniAlias
     {
         /// Add + ".MAN" for the animation data
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
         float m_BlendIn = 0;
         float m_BlendOut = 0;
         uint32_t m_Flags = 0;
-        std::string m_Alias;
+        Utils::String m_Alias;
         EModelScriptAniDir m_Dir = MSB_FORWARD;
     };
 
     struct zCModelScriptAniBlend
     {
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
         float m_BlendIn = 0;
         float m_BlendOut = 0;
     };
 
     struct zCModelScriptAniSync
     {
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
     };
 
     struct zCModelScriptAniCombine
     {
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
         float m_BlendIn = 0;
         float m_BlendOut = 0;
         uint32_t m_Flags = 0;
-        std::string m_Asc;
+        Utils::String m_Asc;
         uint32_t m_LastFrame = 0;
     };
 
     struct zCModelScriptAniDisable
     {
-        std::string m_Name;
+        Utils::String m_Name;
     };
 
     struct zCModelScriptEventTag
     {
         int32_t m_Frame;
-        std::string m_Tag;
-        std::string m_Argument;
+        Utils::String m_Tag;
+        Utils::String m_Argument;
     };
 
     struct zCModelScriptEventSfx
     {
         int32_t m_Frame = 0;
-        std::string m_Name;
+        Utils::String m_Name;
 
         /**
          * If non-zero, will overwrite the default sound range of the character
@@ -119,8 +119,8 @@ namespace ZenLoad
     {
         int32_t m_Frame;
         int32_t m_Num;
-        std::string m_Name;
-        std::string m_Pos;
+        Utils::String m_Name;
+        Utils::String m_Pos;
         bool m_isAttached = false;
 
     };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "zenParser.h"
+#include <utils/string.h>
 
 namespace ZenLoad
 {
@@ -58,21 +59,21 @@ namespace ZenLoad
         /**
          * @brief Reads a string
          */
-        virtual std::string readString() = 0;
+        virtual Utils::String readString() = 0;
 
         /**
          * @brief Reads data of the expected type. Throws if the read type is not the same as specified and not 0
          */
-        virtual void readEntry(const std::string &name, void *target, size_t targetSize, EZenValueType expectedType = ZVT_0) = 0;
+        virtual void readEntry(const Utils::String &name, void *target, size_t targetSize, EZenValueType expectedType = ZVT_0) = 0;
 
-        void readEntry(const std::string &name, std::string *target){ readEntry(name, target, 0, ZVT_STRING); }
-        void readEntry(const std::string &name, int32_t *target){ readEntry(name, target, sizeof(*target), ZVT_INT); }
-        void readEntry(const std::string &name, uint8_t *target){ readEntry(name, target, sizeof(*target), ZVT_BYTE); }
-        void readEntry(const std::string &name, bool *target){ readEntry(name, target, sizeof(*target), ZVT_BOOL); }
-        void readEntry(const std::string &name, uint32_t *target){ readEntry(name, target, sizeof(*target), ZVT_INT); }
-        void readEntry(const std::string &name, float *target){ readEntry(name, target, sizeof(*target), ZVT_FLOAT); }
-        void readEntry(const std::string &name, ZMath::float3 *target){ readEntry(name, target, sizeof(*target), ZVT_VEC3); }
-        void readEntry(const std::string &name, ZMath::Matrix *target){ readEntry(name, target, sizeof(*target), ZVT_RAW_FLOAT); }
+        void readEntry(const Utils::String &name, std::string *target){ readEntry(name, target, 0, ZVT_STRING); }
+        void readEntry(const Utils::String &name, int32_t *target){ readEntry(name, target, sizeof(*target), ZVT_INT); }
+        void readEntry(const Utils::String &name, uint8_t *target){ readEntry(name, target, sizeof(*target), ZVT_BYTE); }
+        void readEntry(const Utils::String &name, bool *target){ readEntry(name, target, sizeof(*target), ZVT_BOOL); }
+        void readEntry(const Utils::String &name, uint32_t *target){ readEntry(name, target, sizeof(*target), ZVT_INT); }
+        void readEntry(const Utils::String &name, float *target){ readEntry(name, target, sizeof(*target), ZVT_FLOAT); }
+        void readEntry(const Utils::String &name, ZMath::float3 *target){ readEntry(name, target, sizeof(*target), ZVT_VEC3); }
+        void readEntry(const Utils::String &name, ZMath::Matrix *target){ readEntry(name, target, sizeof(*target), ZVT_RAW_FLOAT); }
 
         /**
          * @brief Reads the type of a single entry

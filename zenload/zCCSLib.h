@@ -1,6 +1,7 @@
 #pragma once
 
 #include "zTypes.h"
+#include <utils/string.h>
 #include <map>
 
 namespace VDFS
@@ -18,8 +19,8 @@ namespace ZenLoad
         /**
          * @brief Loads the file from the given VDF-Archive
          */
-        zCCSLib(const std::string &fileName, const VDFS::FileIndex &fileIndex);
-        zCCSLib(const std::string &file);
+        zCCSLib(const Utils::String &fileName, const VDFS::FileIndex &fileIndex);
+        zCCSLib(const Utils::String &file);
 
         /**
          * Reads this object from an internal zen
@@ -29,12 +30,12 @@ namespace ZenLoad
         /**
          * @return the message of the given name
          */
-        const oCMsgConversationData &getMessageByName(const std::string &name);
+        const oCMsgConversationData &getMessageByName(const Utils::String &name);
 
         /**
          * @return true if the message was found
          */
-        bool messageExists(const std::string &name) const;
+        bool messageExists(const Utils::String &name) const;
 
         const zCCSLibData &getData(){ return m_Data; }
 
@@ -47,6 +48,6 @@ namespace ZenLoad
         /**
          * Message indices by their names
          */
-        std::map<std::string, size_t> m_MessagesByName;
+        std::map<Utils::String, size_t> m_MessagesByName;
     }; //class zCCSLib
 } //namespace ZenLoad

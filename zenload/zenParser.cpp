@@ -12,6 +12,7 @@
 #include <vdfs/fileIndex.h>
 
 using namespace ZenLoad;
+using namespace Utils;
 
 #ifdef __ANDROID__
 #define ERROR(msg) do{LogError() << msg;}while(0)
@@ -19,7 +20,7 @@ using namespace ZenLoad;
 #define ERROR(msg) do{ throw std::runtime_error(msg); }while(0)
 #endif
 
-ZenParser::ZenParser(const std::string &file)
+ZenParser::ZenParser(const String &file)
     : m_Seek(0)
     , m_pWorldMesh(0)
 {
@@ -27,7 +28,7 @@ ZenParser::ZenParser(const std::string &file)
     readFile(file, m_Data);
 }
 
-ZenParser::ZenParser(const std::string &file, const VDFS::FileIndex &vdfs)
+ZenParser::ZenParser(const String &file, const VDFS::FileIndex &vdfs)
     : m_Seek(0)
     , m_pWorldMesh(0)
 {
@@ -46,7 +47,7 @@ ZenLoad::ZenParser::~ZenParser()
     delete m_pWorldMesh;
 }
 
-bool ZenParser::readFile(const std::string &fileName, std::vector<uint8_t> &data)
+bool ZenParser::readFile(const String &fileName, std::vector<uint8_t> &data)
 {
     std::ifstream file(fileName, std::ios::in | std::ios::ate | std::ios::binary);
     size_t size = file.tellg();
@@ -65,11 +66,6 @@ bool ZenParser::readFile(const std::string &fileName, std::vector<uint8_t> &data
     file.read(reinterpret_cast<char *>(data.data()), size);
 
     return true;
-}
-
-bool ZenParser::isNumber(const std::string &expr)
-{
-    return !expr.empty() && std::find_if(expr.begin(), expr.end(), [](unsigned char c){return !std::isdigit(c); }) == expr.end();
 }
 
 void ZenParser::readHeader()
@@ -101,7 +97,7 @@ void ZenParser::readHeader(ZenHeader &header, ParserImpl *&impl)
     skipString();
 
     // Read file-type, to create the right archiver implementation
-    std::string fileType = readLine();
+    String fileType = readLine();
     if(fileType == "ASCII")
     {
         header.fileType = FT_ASCII;
@@ -205,7 +201,7 @@ void ZenParser::readChunkTest()
     if(header.classname != "oCWorld:zCWorld")
         return;
 
-    std::string str;
+    String str;
     do
     {
         size_t ts = m_Seek;
@@ -225,7 +221,7 @@ void ZenParser::readChunkTest()
         if(type == ParserImpl::ZVT_STRING)
         {
             m_Seek = ts;
-            std::string str; str.resize(size);
+            String str; str.resize(size);
             m_pParserImpl->readEntry("", &str, size, ParserImpl::ZVT_STRING);
 
             if(str.front() == '[' && str.size() > 2)
@@ -287,7 +283,7 @@ void ZenParser::skipEntry()
 int32_t ZenParser::readIntASCII()
 {
     skipSpaces();
-    std::string number;
+    String number;
     while(m_Data[m_Seek] >= '0' && m_Data[m_Seek] <= '9')
     {
         number += m_Data[m_Seek];
@@ -309,12 +305,12 @@ bool ZenParser::readBoolASCII()
     return retVal;
 }
 
-std::string ZenParser::readString(bool skip)
+String ZenParser::readString(bool skip)
 {
     if(skip)
         skipSpaces();
 
-    std::string str;
+    String str;
     while(m_Data[m_Seek] != '\r' && m_Data[m_Seek] != '\n' && m_Data[m_Seek] != ' ')
     {
         str += m_Data[m_Seek];
@@ -323,7 +319,7 @@ std::string ZenParser::readString(bool skip)
     return str;
 }
 
-bool ZenParser::skipString(const std::string &pattern)
+bool ZenParser::skipString(const String &pattern)
 {
     skipSpaces();
     bool retVal = true;
@@ -424,9 +420,9 @@ void ZenParser::readBinaryRaw(void* target, size_t numBytes)
     }
 }
 
-std::string ZenParser::readLine(bool skip)
+String ZenParser::readLine(bool skip)
 {
-    std::string retVal;
+    String retVal;
     while(m_Data[m_Seek] != '\r' && m_Data[m_Seek] != '\n' && m_Data[m_Seek] != '\0')
     {
         checkArraySize();

@@ -3,6 +3,7 @@
 //
 
 #include <utils/logger.h>
+#include <utils/string.h>
 #include <map>
 #include <assert.h>
 #include "DaedalusVM.h"
@@ -15,6 +16,7 @@ const int NUM_FAKE_STRING_SYMBOLS = 5;
 
 using namespace ZenLoad;
 using namespace Daedalus;
+using namespace Utils;
 
 DaedalusVM::DaedalusVM(const std::string& file,  bool registerZenLibExternals)
     : m_GameState(*this)
@@ -454,11 +456,10 @@ std::string DaedalusVM::popString(bool toUpper)
     uint32_t arr;
     uint32_t idx = popVar(arr);
 
-    std::string s = m_DATFile.getSymbolByIndex(idx).getString(arr, getCurrentInstanceDataPtr());
+    String s = m_DATFile.getSymbolByIndex(idx).getString(arr, getCurrentInstanceDataPtr());
 
     if(toUpper)
-        std::transform(s.begin(), s.end(), s.begin(), ::toupper);
-
+        return s.toUpper();
     return s;
 }
 

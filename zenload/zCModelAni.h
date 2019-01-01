@@ -1,9 +1,9 @@
 #pragma once
 
 #include <functional>
-#include <string>
 #include <vector>
-#include "utils/mathlib.h"
+#include <utils/string.h>
+#include <utils/mathlib.h>
 #include "zTypes.h"
 
 namespace VDFS
@@ -24,7 +24,7 @@ namespace ZenLoad
     {
         uint16_t version;
 
-        std::string aniName;
+        Utils::String aniName;
 
         uint32_t layer;
         uint32_t numFrames;
@@ -36,7 +36,7 @@ namespace ZenLoad
 
         ZMath::float3 aniBBox[2];
 
-        std::string nextAniName;
+        Utils::String nextAniName;
 
         uint32_t nodeChecksum;
     };
@@ -72,8 +72,8 @@ namespace ZenLoad
 
             zTMdl_AniEventType aniEventType;
             uint32_t frameNr;
-            std::string tagString;
-            std::string string[ANIEVENT_MAXSTRING];
+            Utils::String tagString;
+            Utils::String string[ANIEVENT_MAXSTRING];
             float values[ANIEVENT_MAXSTRING];
             float prob;
 
@@ -84,7 +84,7 @@ namespace ZenLoad
         {
             uint16_t version;
 
-            std::string aniName;
+            Utils::String aniName;
 
             uint32_t layer;
             uint32_t numFrames;
@@ -96,7 +96,7 @@ namespace ZenLoad
 
             ZMath::float3 aniBBox[2];
 
-            std::string nextAniName;
+            Utils::String nextAniName;
 
             uint32_t nodeChecksum;
         };
@@ -112,7 +112,7 @@ namespace ZenLoad
         /**
          * @brief Loads the mesh from the given VDF-Archive
          */
-        zCModelAni(const std::string &fileName, const VDFS::FileIndex &fileIndex, float scale = 1.0f);
+        zCModelAni(const Utils::String &fileName, const VDFS::FileIndex &fileIndex, float scale = 1.0f);
 
         /**
          * @brief Reads the mesh-object from the given binary stream

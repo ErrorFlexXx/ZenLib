@@ -2,17 +2,17 @@
 #include "zenParser.h"
 #include "utils/logger.h"
 #include "zTypes.h"
-#include <string>
 #include "vdfs/fileIndex.h"
 #include "zCProgMeshProto.h"
 #include "utils/alignment.h"
 
 using namespace ZenLoad;
+using namespace Utils;
 
 static const uint16_t MMID_MMB_HEADER  = 0xE020;
 static const uint16_t MMID_MMB_ANILIST = 0xE030;
 
-zCMorphMesh::zCMorphMesh(const std::string &fileName, const VDFS::FileIndex &fileIndex)
+zCMorphMesh::zCMorphMesh(const String &fileName, const VDFS::FileIndex &fileIndex)
 {
     std::vector<uint8_t> data;
     fileIndex.getFileData(fileName, data);
@@ -61,7 +61,7 @@ void zCMorphMesh::readObjectData(ZenParser &parser)
             {
                 uint32_t version = parser.readBinaryDWord();
 
-                std::string morphProtoName = parser.readLine(true);
+                String morphProtoName = parser.readLine(true);
                 //LogInfo() << "MorphProtoName: " << morphProtoName;
 
                 // Read source-mesh

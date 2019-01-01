@@ -4,12 +4,12 @@
 #include "zenParser.h"
 #include "utils/logger.h"
 #include "zTypes.h"
-#include <string>
 #include "vdfs/fileIndex.h"
 #include "zCProgMeshProto.h"
 #include <math.h>
 
 using namespace ZenLoad;
+using namespace Utils;
 
 static const uint16_t MSID_MESHSOFTSKIN     = 0xE100;
 static const uint16_t MSID_MESHSOFTSKIN_END = 0xE110;
@@ -69,7 +69,7 @@ void SampleUnpackQuat(const uint16_t *in, ZMath::float4 &out)
     }
 }
 
-zCModelAni::zCModelAni(const std::string &fileName, const VDFS::FileIndex &fileIndex, float scale)
+zCModelAni::zCModelAni(const String &fileName, const VDFS::FileIndex &fileIndex, float scale)
 {
     m_ModelAniHeader.version = 0;
 

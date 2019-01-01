@@ -8,6 +8,7 @@
 #include <algorithm>
 
 using namespace ZenLoad;
+using namespace Utils;
 
 std::map<int, const char*> OP_MAP = {
     {0,  "Add"},            // a + b
@@ -58,7 +59,7 @@ DATFile::DATFile()
     , m_Verbose(false)
 {}
 
-DATFile::DATFile(const std::string& file, bool verbose)
+DATFile::DATFile(const String& file, bool verbose)
     : m_Parser(file)
     , m_Verbose(verbose)
 {
@@ -117,7 +118,7 @@ void DATFile::readSymTable()
                     m_Parser.readBinaryRaw(s.floatData.data(), sizeof(float) * s.floatData.size());
 
                     if(m_Verbose)
-                        for(uint32_t j=0;j<s.properties.elemProps.count;j++)
+                        for(uint32_t j = 0; j < s.properties.elemProps.count; j++)
                             LogInfo() << " - Float: " << s.floatData[j];
                     break;
 
@@ -126,13 +127,13 @@ void DATFile::readSymTable()
                     m_Parser.readBinaryRaw(s.intData.data(), sizeof(uint32_t) * s.intData.size());
 
                     if(m_Verbose)
-                        for(uint32_t j=0;j<s.properties.elemProps.count;j++)
+                        for(uint32_t j = 0; j < s.properties.elemProps.count; j++)
                             LogInfo() << " - Int: " << s.intData[j];
                     break;
 
                 case EParType_String:
                     s.strData.resize(s.properties.elemProps.count);
-                    for(uint32_t j=0;j<s.properties.elemProps.count;j++)
+                    for(uint32_t j = 0; j < s.properties.elemProps.count; j++)
                     {
                         uint8_t b = m_Parser.readBinaryByte();
                         while(b != 0x0A)
@@ -164,7 +165,6 @@ void DATFile::readSymTable()
                     break;
             }
         }
-
         s.parent = static_cast<int32_t>(m_Parser.readBinaryDWord());
 
         m_SymTable.symbols.push_back(s);
@@ -172,7 +172,6 @@ void DATFile::readSymTable()
         if(!s.name.empty())
             m_SymTable.symbolsByName[s.name] = m_SymTable.symbols.size()-1;
     }
-
     readStack();
 }
 
@@ -185,17 +184,17 @@ void DATFile::readStack()
 
     m_Stack.stackOffset = m_Parser.getSeek();
 
-    size_t seek=0;
+    size_t seek = 0;
     while(m_Parser.getSeek() < m_Parser.getFileSize())
     {
         PARStackOpCode s;
         memset(&s, 0, sizeof(s));
         s.op = static_cast<EParOp>(m_Parser.readBinaryByte());
 
-        std::stringstream sss;
+        StringStream sss;
         sss << seek << ": " << OP_MAP[s.op];
 
-        std::string ss = sss.str();
+        String ss = sss.str();
 
         seek += sizeof(uint8_t);
 
@@ -272,28 +271,19 @@ void DATFile::readStack()
     }
 }
 
-PARSymbol& DATFile::getSymbolByName(const std::string& symName)
+PARSymbol& DATFile::getSymbolByName(const String& symName)
 {
-    std::string n = std::string(symName);
-    std::transform(n.begin(), n.end(), n.begin(), ::toupper);
-
-    return m_SymTable.symbols[m_SymTable.symbolsByName[n]];
+    return m_SymTable.symbols[m_SymTable.symbolsByName[symName.toUpper()]];
 }
 
-bool DATFile::hasSymbolName(const std::string& symName)
+bool DATFile::hasSymbolName(const String& symName)
 {
-    std::string n = std::string(symName);
-    std::transform(n.begin(), n.end(), n.begin(), ::toupper);
-
-    return m_SymTable.symbolsByName.find(n) != m_SymTable.symbolsByName.end();
+    return m_SymTable.symbolsByName.find(symName.toUpper()) != m_SymTable.symbolsByName.end();
 }
 
-size_t DATFile::getSymbolIndexByName(const std::string& symName)
+size_t DATFile::getSymbolIndexByName(const String& symName)
 {
-    std::string n = std::string(symName);
-    std::transform(n.begin(), n.end(), n.begin(), ::toupper);
-
-    return m_SymTable.symbolsByName[n];
+    return m_SymTable.symbolsByName[symName.toUpper()];
 }
 
 PARSymbol& DATFile::getSymbolByIndex(size_t idx)
@@ -384,10 +374,10 @@ PARStackOpCode DATFile::getStackOpCode(size_t pc)
 size_t DATFile::addSymbol()
 {
     m_SymTable.symbols.emplace_back();
-    return m_SymTable.symbols.size()-1;
+    return m_SymTable.symbols.size() - 1;
 }
 
-void DATFile::iterateSymbolsOfClass(const std::string &className,
+void DATFile::iterateSymbolsOfClass(const String &className,
                                     std::function<void(size_t, PARSymbol&)> callback)
 {
     // First, find the parent-symbol

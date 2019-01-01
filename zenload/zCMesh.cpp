@@ -2,13 +2,13 @@
 #include "zenParser.h"
 #include "utils/logger.h"
 #include "zTypes.h"
-#include <string>
 #include "vdfs/fileIndex.h"
 #include "zCMaterial.h"
 #include <map>
 #include <utils/alignment.h>
 
 using namespace ZenLoad;
+using namespace Utils;
 
 // Types of chunks we will find in a zCMesh-Section
 static const unsigned short	MSID_MESH = 0xB000;
@@ -27,7 +27,7 @@ enum EVersion
     G2_2_6fix = 265
 };
 
-zCMesh::zCMesh(const std::string &fileName, VDFS::FileIndex &fileIndex)
+zCMesh::zCMesh(const String &fileName, VDFS::FileIndex &fileIndex)
 {
     std::vector<uint8_t> data;
     fileIndex.getFileData(fileName, data);
@@ -159,7 +159,7 @@ void zCMesh::readObjectData(ZenParser &parser, const std::vector<size_t> &skipPo
                 // \n terminated string for the name
                 version = parser.readBinaryWord();
                 zDate date; parser.readStructure(date);
-                std::string name = parser.readLine(false);
+                String name = parser.readLine(false);
                 (void)date;
 
                 LogInfo() << "Reading mesh '" << name << "' (Version: " << version << ")";
@@ -215,8 +215,8 @@ void zCMesh::readObjectData(ZenParser &parser, const std::vector<size_t> &skipPo
                     parser.skipSpaces();
 
                     // Skip chunk-header
-                    std::string name = parser.readLine();
-                    std::string classname = parser.readLine();
+                    String name = parser.readLine();
+                    String classname = parser.readLine();
 
                     // Save into vector
                     m_Materials.emplace_back(zCMaterial::readObjectData(parser, version));
@@ -521,7 +521,7 @@ void zCMesh::packMesh(PackedMesh &mesh, float scale, bool removeDoubles)
     }
 
     // Filter textures
-    std::unordered_map<std::string, uint32_t> materialsByTexture;
+    std::unordered_map<String, uint32_t> materialsByTexture;
     std::unordered_map<uint32_t, uint32_t> newMaterialSlotsByMatIndex;
     for(size_t i = 0, end = m_Materials.size(); i < end; i++)
     {

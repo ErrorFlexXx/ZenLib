@@ -1,7 +1,8 @@
-#include <utils/logger.h>
 #include "parserImplBinSafe.h"
+#include <utils/logger.h>
 
 using namespace ZenLoad;
+using namespace Utils;
 
 ZenLoad::ParserImplBinSafe::ParserImplBinSafe(ZenParser *parser)
     : ParserImpl(parser)
@@ -23,7 +24,7 @@ bool ParserImplBinSafe::readChunkStart(ZenParser::ChunkHeader &header)
             return false; // Next property isn't a string or the end
 
         // Read chunk-header
-        std::string vobDescriptor = readString();
+        String vobDescriptor = readString();
 
         // Early exit if this is a chunk-end or not a chunk header
         if(vobDescriptor.empty() || (vobDescriptor.front() != '[' && vobDescriptor.back() != ']') || vobDescriptor.size() <= 2)
@@ -35,16 +36,16 @@ bool ParserImplBinSafe::readChunkStart(ZenParser::ChunkHeader &header)
         vobDescriptor = vobDescriptor.substr(1, vobDescriptor.size() - 2);
 
         // Special case for camera keyframes
-        if(vobDescriptor.find('%') != std::string::npos && vobDescriptor.find('\xA7') != std::string::npos)
+        if(vobDescriptor.find('%') != String::npos && vobDescriptor.find('\xA7') != String::npos)
         {
             // Make a header with createObject = true and ref as classname
-            auto parts = Utils::split(vobDescriptor, ' ');
+            auto parts = vobDescriptor.split(' ');
             header.createObject = true;
             header.classname = "\xA7";
             header.name = "%";
             header.size = 0;
             header.version = 0;
-            header.objectID = std::stoi(parts.back());
+            header.objectID = parts.back().toInt();
             return true;
         }
 
@@ -52,10 +53,10 @@ bool ParserImplBinSafe::readChunkStart(ZenParser::ChunkHeader &header)
         header.startPosition = m_pParser->m_Seek;
 
         // Parse chunk-header
-        std::vector<std::string> vec = Utils::split(vobDescriptor, ' ');
+        auto vec = vobDescriptor.split(' ');
 
-        std::string name;
-        std::string className;
+        String name;
+        String className;
         int classVersion = 0;
         int objectID = 0;
         bool createObject = false;
@@ -96,18 +97,18 @@ bool ParserImplBinSafe::readChunkStart(ZenParser::ChunkHeader &header)
                     else
                         createObject = true;
                 case S_CLASS_NAME:
-                    if(!m_pParser->isNumber(arg))
+                    if(!arg.isNumber())
                     {
                         className = arg;
                         state = S_CLASS_VERSION;
                         break;
                     }
                 case S_CLASS_VERSION:
-                    classVersion = std::atoi(arg.c_str());
+                    classVersion = arg.toInt();
                     state = S_OBJECT_ID;
                     break;
                 case S_OBJECT_ID:
-                    objectID = std::atoi(arg.c_str());
+                    objectID = arg.toInt();
                     state = S_FINISHED;
                     break;
                 default:
@@ -149,7 +150,7 @@ bool ParserImplBinSafe::readChunkEnd()
         if(type != ZVT_STRING)
             return false; // Next property isn't a string or the end
 
-        std::string l = readString();
+        String l = readString();
 
         if(l != "[]")
         {
@@ -183,7 +184,7 @@ void ParserImplBinSafe::readImplHeader()
 
     struct BinSafeEntry
     {
-        std::string key;
+        String key;
         uint16_t insertionIndex;
     };
 
@@ -200,7 +201,7 @@ void ParserImplBinSafe::readImplHeader()
         m_pParser->readBinaryRaw(keyData.data(), keyLen);
 
         // Put the source key together with the insertion index into the map
-        //std::string key(keyData.begin(), keyData.end());
+        //String key(keyData.begin(), keyData.end());
         //map[hashValue].push_back( {key, insIdx} );
     }
 
@@ -208,7 +209,7 @@ void ParserImplBinSafe::readImplHeader()
     m_pParser->m_Seek = s;
 }
 
-std::string ParserImplBinSafe::readString()
+String ParserImplBinSafe::readString()
 {
     EZenValueType type;
     size_t size;
@@ -219,7 +220,7 @@ std::string ParserImplBinSafe::readString()
     if(type != ZVT_STRING)
         throw std::runtime_error("Expected string-type");
 
-    std::string str; str.resize(size);
+    String str; str.resize(size);
     m_pParser->readBinaryRaw(&str[0], size);
 
     // Skip potential hash-value at the end of the string
@@ -267,11 +268,11 @@ void ParserImplBinSafe::readTypeAndSizeBinSafe(EZenValueType &type, size_t &size
             break;
 
         default:
-            throw std::runtime_error(std::string("BinSafe: Datatype not implemented"));
+            throw std::runtime_error(String("BinSafe: Datatype not implemented"));
     }
 }
 
-void ParserImplBinSafe::readEntry(const std::string &expectedName,
+void ParserImplBinSafe::readEntry(const String &expectedName,
                                   void *target,
                                   size_t targetSize,
                                   EZenValueType expectedType)
@@ -301,9 +302,9 @@ void ParserImplBinSafe::readEntry(const std::string &expectedName,
         case ZVT_0: break;
         case ZVT_STRING:
         {
-            std::string str; str.resize(size);
+            String str; str.resize(size);
             m_pParser->readBinaryRaw(&str[0], size);
-            *reinterpret_cast<std::string*>(target) = str;
+            *reinterpret_cast<String*>(target) = str;
         }
         break;
 

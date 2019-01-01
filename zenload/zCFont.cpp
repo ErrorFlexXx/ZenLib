@@ -9,15 +9,16 @@
 #include <algorithm>
 
 using namespace ZenLoad;
+using namespace Utils;
 
-zCFont::zCFont(const std::string &fileName, const VDFS::FileIndex &fileIndex)
+zCFont::zCFont(const String &fileName, const VDFS::FileIndex &fileIndex)
 {
-    std::string fntFile = fileName;
+    String fntFile = fileName;
     std::transform(fntFile.begin(), fntFile.end(), fntFile.begin(), ::tolower);
 
-    if(fntFile.find(".tga") != std::string::npos)
+    if(fntFile.find(".tga") != String::npos)
         fntFile = fntFile.substr(0, fntFile.size() - 4) + ".FNT";
-    else if(fntFile.find(".fnt") == std::string::npos)
+    else if(fntFile.find(".fnt") == String::npos)
         fntFile += ".FNT";
 
     std::vector<uint8_t> data;
@@ -51,7 +52,7 @@ bool zCFont::parseFNTData(const std::vector<uint8_t> &fntData)
          * {float2]:  fontUV2[FONT_NUM_MAX_LETTERS]
          */
 
-        std::string version = parser.readLine();
+        String version = parser.readLine();
 
         // Only version 1 is used by gothic
         if(version != "1")
@@ -60,7 +61,7 @@ bool zCFont::parseFNTData(const std::vector<uint8_t> &fntData)
             return false;
         }
 
-        std::string name = parser.readLine(false);
+        String name = parser.readLine(false);
 
         uint32_t height = parser.readBinaryDWord();
         uint32_t magic = parser.readBinaryDWord();

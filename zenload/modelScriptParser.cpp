@@ -6,6 +6,8 @@
 #include "modelScriptParser.h"
 #include "zenParser.h"
 
+using namespace Utils;
+
 namespace ZenLoad
 {
 
@@ -68,7 +70,7 @@ namespace ZenLoad
     static uint32_t makeAniFlags(ZenParser &zen)
     {
         uint32_t flags = 0;
-        std::string flag_str = zen.readLine(true);
+        String flag_str = zen.readLine(true);
         for (auto ch : flag_str)
         {
             switch (ch)
@@ -95,7 +97,7 @@ namespace ZenLoad
 
     static EModelScriptAniDir makeAniDir(ZenParser &zen)
     {
-        std::string str = zen.readLine();
+        String str = zen.readLine();
         return (!str.empty() && str[0] == 'R') ? MSB_BACKWARD : MSB_FORWARD;
     }
 
@@ -372,7 +374,7 @@ namespace ZenLoad
 
             if (m_ArgCount < m_Args.size())
             {
-                std::string& arg = m_Args[m_ArgCount];
+                String& arg = m_Args[m_ArgCount];
                 arg.clear();
                 arg.insert(arg.begin(), m_Token.text.begin(), m_Token.text.end());
 
@@ -602,18 +604,15 @@ namespace ZenLoad
             return Error;
         }
 
-        m_Ani.m_Name = m_Args[0];
-
-        std::transform(m_Ani.m_Name.begin(), m_Ani.m_Name.end(), m_Ani.m_Name.begin(), ::toupper);
+        m_Ani.m_Name = m_Args[0].toUpper();
 
         /*m_Ani.m_Layer = m_Args[1];*/
-        m_Ani.m_Next = m_Args[2];
-        std::transform(m_Ani.m_Next.begin(), m_Ani.m_Next.end(), m_Ani.m_Next.begin(), ::toupper);
+        m_Ani.m_Next = m_Args[2].toUpper();
 
-        std::string& flags = m_Args[5];
+        String& flags = m_Args[5];
 
         m_Ani.m_Flags = 0;
-        for(size_t i=0;i<flags.size();i++)
+        for(size_t i = 0; i < flags.size(); i++)
         {
             switch(flags[i])
             {
@@ -648,8 +647,8 @@ namespace ZenLoad
 
         if(m_Args.size() >= 10)
         {
-            std::string firstFrame = m_Args[8];
-            std::string lastFrame = m_Args[9];
+            String firstFrame = m_Args[8];
+            String lastFrame = m_Args[9];
 
             m_Ani.m_FirstFrame = std::stoi(firstFrame);
             m_Ani.m_LastFrame = std::stoi(lastFrame);
@@ -680,22 +679,18 @@ namespace ZenLoad
             return Error;
         }
 
-        m_Alias.m_Name = m_Args[0];
+        m_Alias.m_Name = m_Args[0].toUpper();
 
-        std::transform(m_Alias.m_Name.begin(), m_Alias.m_Name.end(), m_Alias.m_Name.begin(), ::toupper);
+        m_Alias.m_Next = m_Args[2].toUpper();
 
-        m_Alias.m_Next = m_Args[2];
-        std::transform(m_Alias.m_Next.begin(), m_Alias.m_Next.end(), m_Alias.m_Next.begin(), ::toupper);
-
-        m_Alias.m_Alias = m_Args[6];
-        std::transform(m_Alias.m_Alias.begin(), m_Alias.m_Alias.end(), m_Alias.m_Alias.begin(), ::toupper);
+        m_Alias.m_Alias = m_Args[6].toUpper();
 
         m_Alias.m_Dir = (!m_Args[7].empty() && m_Args[7][0] == 'R') ? MSB_BACKWARD : MSB_FORWARD;
 
-        std::string& flags = m_Args[5];
+        String& flags = m_Args[5];
 
         m_Alias.m_Flags = 0;
-        for(size_t i=0;i<flags.size();i++)
+        for(size_t i = 0; i < flags.size(); i++)
         {
             switch(flags[i])
             {
@@ -751,11 +746,6 @@ namespace ZenLoad
         return Success;
     }
 
-    inline bool isStringNumber(const std::string &s)
-    {
-        return s.find_first_not_of( "0123456789" ) == std::string::npos;
-    }
-
     ModelScriptTextParser::Result ModelScriptTextParser::parsePfxEvent()
     {
         Result res = parseArguments();
@@ -765,12 +755,12 @@ namespace ZenLoad
         m_Pfx.emplace_back();
         unsigned int currentArgIndex = 0;
         //Base case: no node name and no attach
-        m_Pfx.back().m_Frame = (uint32_t)std::stoi(m_Args[currentArgIndex]);
+        m_Pfx.back().m_Frame = (uint32_t)m_Args[currentArgIndex].toInt();
         ++currentArgIndex;
         //If pfx event has no handle number, no pfx end event exists for it
-        if(isStringNumber(m_Args[currentArgIndex]))
+        if(m_Args[currentArgIndex].isNumber())
         {
-            m_Pfx.back().m_Num= (uint32_t)std::stoi(m_Args[currentArgIndex]);
+            m_Pfx.back().m_Num = (uint32_t)m_Args[currentArgIndex].toInt();
             ++currentArgIndex;
         }
         else
@@ -833,7 +823,7 @@ namespace ZenLoad
         for(size_t i=2;i<std::min(m_Args.size(), static_cast<size_t>(4));i++)
         {
             // Look for optional arguments (First 2 args are required)
-            if(m_Args[i].find("R:") != std::string::npos)
+            if(m_Args[i].find("R:") != String::npos)
             {
                 m_Sfx.back().m_Range = std::stof(m_Args[i].substr(m_Args[i].find("R:") + 2)); // 2: Skip R:
             }
@@ -864,7 +854,7 @@ namespace ZenLoad
         for(size_t i=2;i<std::min(m_Args.size(), static_cast<size_t>(4));i++)
         {
             // Look for optional arguments (First 2 args are required)
-            if(m_Args[i].find("R:") != std::string::npos)
+            if(m_Args[i].find("R:") != String::npos)
             {
                 m_Sfx.back().m_Range = std::stof(m_Args[i].substr(m_Args[i].find("R:") + 2)); // 2: Skip R:
             }

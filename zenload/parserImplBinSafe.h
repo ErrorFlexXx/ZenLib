@@ -20,10 +20,10 @@ namespace ZenLoad
         virtual bool readChunkEnd();
 
         /** @copydoc ParserImpl::readString */
-        virtual std::string readString();
+        virtual Utils::String readString();
 
         /** @copydoc ParserImpl::readEntry */
-        virtual void readEntry(const std::string &name, void *target, size_t targetSize, EZenValueType expectedType = ZVT_0);
+        virtual void readEntry(const Utils::String &name, void *target, size_t targetSize, EZenValueType expectedType = ZVT_0);
 
         /** @copydoc ParserImpl::readEntryType */
         virtual void readEntryType(EZenValueType &type, size_t &size);

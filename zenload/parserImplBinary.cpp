@@ -2,6 +2,7 @@
 #include "utils/logger.h"
 
 using namespace ZenLoad;
+using namespace Utils;
 
 ParserImplBinary::ParserImplBinary(ZenParser *parser)
     : ParserImpl(parser)
@@ -17,8 +18,8 @@ bool ParserImplBinary::readChunkStart(ZenParser::ChunkHeader &header)
     m_pParser->skipSpaces();
 
     // Skip chunk-header
-    std::string name = m_pParser->readLine();
-    std::string classname = m_pParser->readLine();
+    String name = m_pParser->readLine();
+    String classname = m_pParser->readLine();
 
     header.classname = classname;
     header.createObject = true; // TODO: References shouldn't be used in binary zens...
@@ -48,18 +49,18 @@ void ParserImplBinary::readImplHeader()
     m_pParser->skipNewLines();
 }
 
-std::string ParserImplBinary::readString()
+String ParserImplBinary::readString()
 {
-    std::string ret = m_pParser->readLine();
+    String ret = m_pParser->readLine();
     return ret;
 }
 
-void ParserImplBinary::readEntry(const std::string &expectedName, void *target, size_t targetSize, EZenValueType expectedType)
+void ParserImplBinary::readEntry(const String &expectedName, void *target, size_t targetSize, EZenValueType expectedType)
 {
     // Special case for strings, they're read until 0-bytes
     if(expectedType == ZVT_STRING)
     {
-        *reinterpret_cast<std::string*>(target) = readString();
+        *reinterpret_cast<String*>(target) = readString();
         return;
     }
 

@@ -2,6 +2,8 @@
 #include "msbParser.h"
 #include "zenParser.h"
 
+using namespace Utils;
+
 namespace ZenLoad
 {
     MsbParser::MsbParser(ZenParser &zen)
@@ -44,7 +46,7 @@ namespace ZenLoad
     static uint32_t makeAniFlags(ZenParser &zen)
     {
         uint32_t flags = 0;
-        std::string flag_str = zen.readString();
+        String flag_str = zen.readString();
         for (auto ch : flag_str)
         {
             switch (ch)
@@ -75,7 +77,7 @@ namespace ZenLoad
 
     static EMsbAniDir makeAniDir(ZenParser &zen)
     {
-        std::string str = zen.readString();
+        String str = zen.readString();
         return (!str.empty() && str[0] == 'R') ? MSB_BACKWARD : MSB_FORWARD;
     }
 

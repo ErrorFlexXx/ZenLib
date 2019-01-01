@@ -3,11 +3,10 @@
  */
 
 #include "ztex.h"
-#include <string>
+#include <cstring>
 #include <inttypes.h>
 #include <algorithm>
 #include "utils/logger.h"
-#include <string.h>
 #include "ztex2dds.h"
 #include <squish.h>
 #include <math.h>

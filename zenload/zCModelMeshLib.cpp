@@ -3,13 +3,13 @@
 #include "utils/logger.h"
 #include "zTypes.h"
 #include <algorithm>
-#include <string>
 #include <cfloat>
 #include "vdfs/fileIndex.h"
 #include "zCMeshSoftSkin.h"
 #include "parserImpl.h"
 
 using namespace ZenLoad;
+using namespace Utils;
 
 // Types of chunks we will find in a zCModelMeshLib-Section
 
@@ -27,7 +27,7 @@ const uint16_t MLID_MODELHIERARCHY = 0xD100;
 const uint16_t MLID_MDH_SOURCE = 0xD110;
 const uint16_t MLID_MDH_END	= 0xD120;
 
-zCModelMeshLib::zCModelMeshLib(const std::string &fileName, const VDFS::FileIndex &fileIndex, float scale)
+zCModelMeshLib::zCModelMeshLib(const String &fileName, const VDFS::FileIndex &fileIndex, float scale)
 {
     memset(m_BBox, 0, sizeof(m_BBox));
     memset(m_BBoxCollision, 0, sizeof(m_BBoxCollision));
@@ -44,11 +44,11 @@ zCModelMeshLib::zCModelMeshLib(const std::string &fileName, const VDFS::FileInde
         // FIXME: There is an internal copy of the data here. Optimize!
         ZenLoad::ZenParser parser(data.data(), data.size());
 
-        if(fileName.find(".MDM") != std::string::npos)
+        if(fileName.find(".MDM") != String::npos)
             loadMDM(parser);
-        else if(fileName.find(".MDH") != std::string::npos)
+        else if(fileName.find(".MDH") != String::npos)
             loadMDH(parser, scale);
-        else if(fileName.find(".MDL") != std::string::npos)
+        else if(fileName.find(".MDL") != String::npos)
             loadMDL(parser, scale);
     }
     catch(std::exception &e)
@@ -275,7 +275,7 @@ void zCModelMeshLib::packMesh(PackedSkeletalMesh &mesh, float scale) const
     }*/
 }
 
-size_t zCModelMeshLib::findNodeIndex(const std::string &nodeName) const
+size_t zCModelMeshLib::findNodeIndex(const String &nodeName) const
 {
     for(size_t i = 0; i < m_Nodes.size(); i++)
     {

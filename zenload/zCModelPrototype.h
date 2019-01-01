@@ -3,6 +3,7 @@
 #include <vector>
 #include "utils/mathlib.h"
 #include "zTypes.h"
+#include <utils/string.h>
 
 namespace VDFS
 {
@@ -18,9 +19,9 @@ namespace ZenLoad
     public:
         struct Animation
         {
-            std::string animationName;
+            Utils::String animationName;
             unsigned int layer;
-            std::string nextAnimation;
+            Utils::String nextAnimation;
             float blendIn, blendOut;
 
             enum Flags
@@ -33,7 +34,7 @@ namespace ZenLoad
             };
 
             unsigned int flags;
-            std::string ascName;
+            Utils::String ascName;
             bool aniReversed;
             int startFrame, endFrame;
         };
@@ -43,7 +44,7 @@ namespace ZenLoad
         /**
          * @brief Loads the mesh from the given VDF-Archive
          */
-        zCModelPrototype(const std::string &fileName, const VDFS::FileIndex &fileIndex);
+        zCModelPrototype(const Utils::String &fileName, const VDFS::FileIndex &fileIndex);
 
         /**
          * @brief Reads the mesh-object from the given binary stream

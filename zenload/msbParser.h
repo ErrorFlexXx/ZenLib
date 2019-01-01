@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <utils/string.h>
 #include <zenload/zCModelAni.h>
 
 namespace ZenLoad
@@ -27,13 +27,13 @@ namespace ZenLoad
     struct zCMsbAni
     {
         /// Add + ".MAN" for the animation data
-        std::string  m_Name;
+        Utils::String  m_Name;
         uint32_t     m_Layer = 0;
-        std::string  m_Next;
+        Utils::String  m_Next;
         float        m_BlendIn = 0;
         float        m_BlendOut = 0;
         uint32_t     m_Flags = 0;
-        std::string  m_Asc;
+        Utils::String  m_Asc;
         EMsbAniDir   m_Dir = MSB_FORWARD;
         uint32_t     m_FirstFrame = 0;
         uint32_t     m_LastFrame = 0;
@@ -45,61 +45,61 @@ namespace ZenLoad
     struct zCMsbAniAlias
     {
         /// Add + ".MAN" for the animation data
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t    m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
         float       m_BlendIn = 0;
         float       m_BlendOut = 0;
         uint32_t    m_Flags = 0;
-        std::string m_Alias;
+        Utils::String m_Alias;
         EMsbAniDir  m_Dir = MSB_FORWARD;
     };
 
     struct zCMsbAniBlend
     {
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t    m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
         float       m_BlendIn = 0;
         float       m_BlendOut = 0;
     };
 
     struct zCMsbAniSync
     {
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t    m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
     };
 
     struct zCMsbAniCombine
     {
-        std::string m_Name;
+        Utils::String m_Name;
         uint32_t    m_Layer = 0;
-        std::string m_Next;
+        Utils::String m_Next;
         float       m_BlendIn = 0;
         float       m_BlendOut = 0;
         uint32_t    m_Flags = 0;
-        std::string m_Asc;
+        Utils::String m_Asc;
         uint32_t    m_LastFrame = 0;
     };
 
     struct zCMsbAniDisable
     {
-        std::string m_Name;
+        Utils::String m_Name;
     };
 
     struct zCMsbTag
     {
-        std::string m_Tag;
-        std::string m_Values[ANIEVENT_MAXSTRING];
+        Utils::String m_Tag;
+        Utils::String m_Values[ANIEVENT_MAXSTRING];
     };
 
     struct zCMsbEventSfx
     {
         uint32_t    m_Frame = 0;
-        std::string m_Name;
-        std::string m_Value1;
-        std::string m_Value2;
+        Utils::String m_Name;
+        Utils::String m_Value1;
+        Utils::String m_Value2;
     };
 
     class ZenParser;

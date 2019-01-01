@@ -1,9 +1,10 @@
 #pragma once
 
 #include <vector>
-#include "utils/mathlib.h"
+#include <utils/mathlib.h>
 #include "zTypes.h"
 #include "zCProgMeshProto.h"
+#include <utils/string.h>
 
 namespace VDFS
 {
@@ -22,7 +23,7 @@ namespace ZenLoad
         /**
          * @brief Loads the mesh from the given VDF-Archive
          */
-        zCMorphMesh(const std::string &fileName, const VDFS::FileIndex &fileIndex);
+        zCMorphMesh(const Utils::String &fileName, const VDFS::FileIndex &fileIndex);
 
         /**
          * @brief Reads the mesh-object from the given binary stream

@@ -1,5 +1,6 @@
 #pragma once
-#include <string>
+
+#include <utils/string.h>
 #include <vector>
 #include <map>
 #include "zenParser.h"
@@ -115,7 +116,7 @@ namespace ZenLoad
             instanceDataClass = IC_Npc;
         }
 
-        std::string name;
+        Utils::String name;
 
         struct Properties
         {
@@ -164,7 +165,7 @@ namespace ZenLoad
 
         std::vector<float> floatData;
         std::vector<int32_t> intData;
-        std::vector<std::string> strData;
+        std::vector<Utils::String> strData;
         int32_t classOffset;
         uint32_t address;
 
@@ -184,10 +185,10 @@ namespace ZenLoad
             return &intData[idx];
         }
 
-        std::string *getStrAddr(size_t idx = 0, void *baseAddr = nullptr)
+        Utils::String *getStrAddr(size_t idx = 0, void *baseAddr = nullptr)
         {
             if(baseAddr && dataOffset != -1)
-                return reinterpret_cast<std::string*>(reinterpret_cast<char*>(baseAddr) + dataOffset + (sizeof(std::string) * idx));
+                return reinterpret_cast<Utils::String*>(reinterpret_cast<char*>(baseAddr) + dataOffset + (sizeof(Utils::String) * idx));
 
             if(strData.size() <= idx)
                 strData.resize(idx+1);
@@ -233,13 +234,13 @@ namespace ZenLoad
             }
         }
 
-        void set(const std::string &v, size_t idx = 0, void *baseAddr = nullptr)
+        void set(const Utils::String &v, size_t idx = 0, void *baseAddr = nullptr)
         {
             if(strData.size() <= idx) strData.resize(idx+1);
             strData[idx] = v;
 
             if(baseAddr && dataOffset != -1)
-                *reinterpret_cast<std::string*>(reinterpret_cast<char*>(baseAddr) + dataOffset + (sizeof(float) * idx)) = v;
+                *reinterpret_cast<Utils::String*>(reinterpret_cast<char*>(baseAddr) + dataOffset + (sizeof(float) * idx)) = v;
         }
 
         bool isDataSame(const PARSymbol &other) const
@@ -252,7 +253,7 @@ namespace ZenLoad
     {
         std::vector<uint32_t> sortTable;
         std::vector<PARSymbol> symbols;
-        std::unordered_map<std::string, size_t> symbolsByName;
+        std::unordered_map<Utils::String, size_t> symbolsByName;
     };
 
     struct PARStack
@@ -278,33 +279,33 @@ namespace ZenLoad
 
     struct PARInstance
     {
-        std::map<std::string, uint32_t> symbolsByName;
+        std::map<Utils::String, uint32_t> symbolsByName;
     };
 
     class DATFile
     {
     public:
         DATFile();
-        DATFile(const std::string &file, bool verbose = false);
+        DATFile(const Utils::String &file, bool verbose = false);
 
         void parseFile();
 
         /**
          * @return True, when a symbol with the given name exists
          */
-        bool hasSymbolName(const std::string &symName);
+        bool hasSymbolName(const Utils::String &symName);
 
         /**
          * @return The symbol connected to the given name
          */
-        PARSymbol& getSymbolByName(const std::string &symName);
-        size_t getSymbolIndexByName(const std::string &symName);
+        PARSymbol& getSymbolByName(const Utils::String &symName);
+        size_t getSymbolIndexByName(const Utils::String &symName);
         PARSymbol& getSymbolByIndex(size_t idx);
 
         /**
          * Goes through all symbols and calls the given callback for every instance of the specified class
          */
-        void iterateSymbolsOfClass(const std::string &className, std::function<void(size_t, PARSymbol&)> callback);
+        void iterateSymbolsOfClass(const Utils::String &className, std::function<void(size_t, PARSymbol&)> callback);
 
         /**
          * @return Object containing information about the opcode currently on the stack

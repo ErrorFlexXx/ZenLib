@@ -9,11 +9,12 @@
 #include "../lib/physfs/extras/ignorecase.h"
 
 using namespace VDFS;
+using namespace Utils;
 
 namespace internal {
 
     // Must be initialized with the 0th argument passed to the executable for PhysFS.
-    std::string argv0;
+    String argv0;
 
     // We need to do some poor-mans-refcounting to be able to know when we
     // need to init and deinit physfs.
@@ -52,7 +53,7 @@ void FileIndex::initVDFS(const char *argv0)
     internal::argv0 = argv0;
 }
 
-bool FileIndex::loadVDF(const std::string &vdf, uint32_t priority, const std::string &mountPoint)
+bool FileIndex::loadVDF(const String &vdf, uint32_t priority, const String &mountPoint)
 {
     assert(!isFinalized());
 
@@ -71,7 +72,7 @@ bool FileIndex::loadVDF(const std::string &vdf, uint32_t priority, const std::st
     return true;
 }
 
-bool FileIndex::mountFolder(const std::string &path, const std::string &mountPoint)
+bool FileIndex::mountFolder(const String &path, const String &mountPoint)
 {
     if (!PHYSFS_mount(path.c_str(), mountPoint.c_str(), 1))
     {
@@ -82,11 +83,11 @@ bool FileIndex::mountFolder(const std::string &path, const std::string &mountPoi
     return true;
 }
 
-bool FileIndex::getFileData(const std::string &file, std::vector<uint8_t> &data) const
+bool FileIndex::getFileData(const String &file, std::vector<uint8_t> &data) const
 {
     assert(isFinalized());
 
-    std::string caseSensitivePath = findCaseSensitiveNameOf(file);
+    String caseSensitivePath = findCaseSensitiveNameOf(file);
     bool exists = caseSensitivePath != "";
 
     if (!exists) return false;
@@ -110,20 +111,20 @@ bool FileIndex::getFileData(const std::string &file, std::vector<uint8_t> &data)
     return true;
 }
 
-bool FileIndex::hasFile(const std::string &name) const
+bool FileIndex::hasFile(const String &name) const
 {
     assert(isFinalized());
 
     return findCaseSensitiveNameOf(name) != "";
 }
 
-int64_t VDFS::FileIndex::getLastModTime(const std::string &name)
+int64_t VDFS::FileIndex::getLastModTime(const String &name)
 {
     int64_t result = -1;
     std::ifstream infile(name);
     if (infile.good())
     {
-        std::string firstLine;
+        String firstLine;
         std::getline(infile, firstLine);
         struct std::tm tm;
         std::smatch match;
@@ -161,10 +162,10 @@ int64_t VDFS::FileIndex::getLastModTime(const std::string &name)
     return result;
 }
 
-std::vector<std::string> FileIndex::getKnownFiles(const std::string &path) const
+std::vector<String> FileIndex::getKnownFiles(const String &path) const
 {
-    std::string filePath(path);
-    std::vector<std::string> vec;
+    String filePath(path);
+    std::vector<String> vec;
     bool exists = PHYSFSEXT_locateCorrectCase(&filePath[0]) == 0;
     if (!exists) {
         return vec;
@@ -180,26 +181,20 @@ std::vector<std::string> FileIndex::getKnownFiles(const std::string &path) const
 
 void FileIndex::updateUpperedFilenamesMap()
 {
-    std::vector<std::string> files = getKnownFiles();
+    std::vector<String> files = getKnownFiles();
 
     m_FilenamesByUpperedFileNames.clear();
-    for (const std::string &file : files)
+    for (const String &file : files)
     {
-        std::string uppered = file;
-        std::transform(uppered.begin(), uppered.end(), uppered.begin(), ::toupper);
-
-        m_FilenamesByUpperedFileNames[uppered] = file;
+        m_FilenamesByUpperedFileNames[file.toUpper()] = file;
     }
 }
 
-std::string FileIndex::findCaseSensitiveNameOf(const std::string &caseInsensitiveName) const
+String FileIndex::findCaseSensitiveNameOf(const String &caseInsensitiveName) const
 {
     assert(isFinalized());
 
-    std::string uppered = caseInsensitiveName;
-    std::transform(caseInsensitiveName.begin(), caseInsensitiveName.end(), uppered.begin(), ::toupper);
-
-    auto it = m_FilenamesByUpperedFileNames.find(uppered);
+    auto it = m_FilenamesByUpperedFileNames.find(caseInsensitiveName.toUpper());
 
     if (it == m_FilenamesByUpperedFileNames.end())
         return "";

@@ -2,13 +2,13 @@
 #include "zenParser.h"
 #include "utils/logger.h"
 #include "zTypes.h"
-#include <string>
 #include <algorithm>
 #include <stdlib.h>
 #include "vdfs/fileIndex.h"
 #include "utils/alignment.h"
 
 using namespace ZenLoad;
+using namespace Utils;
 
 enum class EIdxAni : int
 {
@@ -44,13 +44,13 @@ enum class EIdxRegisterMesh
  * @param _line line to parse
  * @return Vector of all parameters as strings
  */
-std::vector<std::string> splitDecl(const std::string &_line)
+std::vector<String> splitDecl(const String &_line)
 {
     // Example: registerMesh ("Gob_Body.ASC")
     // Example: ani			("s_FistRun"					1	"s_FistRun"			0.1	0.1	M.	"Gob_1hRunAmbient_M01.asc"	F	0	30	FPS:10)
 
     // Collapse
-    std::vector<std::string> out;
+    std::vector<String> out;
     out.push_back("");
     bool inArg = true;
     for(auto &c : _line)
@@ -80,7 +80,7 @@ std::vector<std::string> splitDecl(const std::string &_line)
     return out;
 }
 
-zCModelPrototype::zCModelPrototype(const std::string &fileName, const VDFS::FileIndex &fileIndex)
+zCModelPrototype::zCModelPrototype(const String &fileName, const VDFS::FileIndex &fileIndex)
 {
     std::vector<uint8_t> data;
     fileIndex.getFileData(fileName, data);
@@ -123,14 +123,14 @@ void zCModelPrototype::readObjectData(ZenParser &parser)
     {
         while (parser.getSeek() < parser.getFileSize())
         {
-            std::string line = parser.readLine(true);
+            String line = parser.readLine(true);
             std::transform(line.begin(), line.end(), line.begin(), ::tolower);
 
             LogInfo() << "MDS-Line: " << line;
 
-            if (line.find("//") != std::string::npos)
+            if (line.find("//") != String::npos)
                 continue; // Skip comments. These MUST be on their own lines, by definition.
-            else if (line.find("}") != std::string::npos)
+            else if (line.find("}") != String::npos)
                 break; // There can be only one } per block
 
         }
@@ -139,8 +139,8 @@ void zCModelPrototype::readObjectData(ZenParser &parser)
     /**
      * Register mesh
      */
-    auto readRegisterMesh = [&](const std::string &line) {
-        std::vector<std::string> args = splitDecl(line);
+    auto readRegisterMesh = [&](const String &line) {
+        std::vector<String> args = splitDecl(line);
 
         LogInfo() << "Args: " << args;
     };
@@ -148,8 +148,8 @@ void zCModelPrototype::readObjectData(ZenParser &parser)
     /**
      * Ani
      */
-    auto readAni = [&](const std::string &line) {
-        std::vector<std::string> args = splitDecl(line);
+    auto readAni = [&](const String &line) {
+        std::vector<String> args = splitDecl(line);
 
         LogInfo() << "Args: " << args;
 
@@ -166,19 +166,19 @@ void zCModelPrototype::readObjectData(ZenParser &parser)
         ani.endFrame = atoi(args[(int)EIdxAni::endFrame].c_str());
 
         ani.flags = 0;
-        if(args[(int)EIdxAni::flags].find("m") != std::string::npos)
+        if(args[(int)EIdxAni::flags].find("m") != String::npos)
             ani.flags |= Animation::MoveObject;
 
-        if(args[(int)EIdxAni::flags].find("r") != std::string::npos)
+        if(args[(int)EIdxAni::flags].find("r") != String::npos)
             ani.flags |= Animation::RotateObject;
 
-        if(args[(int)EIdxAni::flags].find("e") != std::string::npos)
+        if(args[(int)EIdxAni::flags].find("e") != String::npos)
             ani.flags |= Animation::WaitEnd;
 
-        if(args[(int)EIdxAni::flags].find("f") != std::string::npos)
+        if(args[(int)EIdxAni::flags].find("f") != String::npos)
             ani.flags |= Animation::Fly;
 
-        if(args[(int)EIdxAni::flags].find("i") != std::string::npos)
+        if(args[(int)EIdxAni::flags].find("i") != String::npos)
             ani.flags |= Animation::Idle;
 
         m_Animations.push_back(ani);
@@ -191,50 +191,50 @@ void zCModelPrototype::readObjectData(ZenParser &parser)
 
         while (parser.getSeek() < parser.getFileSize())
         {
-            std::string line = parser.readLine(true);
+            String line = parser.readLine(true);
             std::transform(line.begin(), line.end(), line.begin(), ::tolower);
 
             LogInfo() << "MDS-Line: " << line;
 
-            if (line.find("//") != std::string::npos)
+            if (line.find("//") != String::npos)
                 continue; // Skip comments. These MUST be on their own lines, by definition.
-            else if (line.find("anienum") != std::string::npos)
+            else if (line.find("anienum") != String::npos)
                 continue;
-            else if (line.find("aniblend") != std::string::npos)
+            else if (line.find("aniblend") != String::npos)
                 continue;
-            else if (line.find("eventmmstartani") != std::string::npos)
+            else if (line.find("eventmmstartani") != String::npos)
                 continue;
-            else if (line.find("anialias") != std::string::npos)
+            else if (line.find("anialias") != String::npos)
                 continue;
-            else if (line.find("anicomb") != std::string::npos)
+            else if (line.find("anicomb") != String::npos)
                 continue;
-            else if (line.find("anidisable") != std::string::npos)
+            else if (line.find("anidisable") != String::npos)
                 continue;
-            else if (line.find("ani") != std::string::npos)
+            else if (line.find("ani") != String::npos)
                 readAni(line);
-            else if (line.find("meshandtree") != std::string::npos)
+            else if (line.find("meshandtree") != String::npos)
                 continue;
-            else if (line.find("registermesh") != std::string::npos)
+            else if (line.find("registermesh") != String::npos)
                 continue;
-            else if (line.find("startmesh") != std::string::npos)
+            else if (line.find("startmesh") != String::npos)
                 continue;
-            else if (line.find("{") != std::string::npos)
+            else if (line.find("{") != String::npos)
                 continue;
-            else if (line.find("}") != std::string::npos)
+            else if (line.find("}") != String::npos)
                 continue; //break; // There can be only one } per block
         }
     };
 
     while (parser.getSeek() < parser.getFileSize())
     {
-        std::string line = parser.readLine(true);
+        String line = parser.readLine(true);
         std::transform(line.begin(), line.end(), line.begin(), ::tolower);
 
         LogInfo() << "MDS-Line: " << line;
 
-        if (line.find("//") != std::string::npos)
+        if (line.find("//") != String::npos)
             continue; // Skip comments. These MUST be on their own lines, by definition.
-        else if (line.find("model") != std::string::npos)
+        else if (line.find("model") != String::npos)
             readModel();
     }
 }

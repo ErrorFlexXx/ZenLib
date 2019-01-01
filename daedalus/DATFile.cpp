@@ -4,11 +4,13 @@
 
 #include "DATFile.h"
 #include <utils/logger.h>
+#include <utils/string.h>
 #include <map>
 #include <algorithm>
 
 using namespace ZenLoad;
 using namespace Daedalus;
+using namespace Utils;
 
 std::map<int, const char*> OP_MAP = {
         {0,  "Add"},    // a + b
@@ -62,15 +64,15 @@ DATFile::DATFile() :
 
 }
 
-DATFile::DATFile(const std::string& file, bool verbose) :
+DATFile::DATFile(const String& file, bool verbose) :
         m_Parser(file),
         m_Verbose(verbose)
 {
     /*
-    std::string end = "GOTHIC.DAT";
+    String end = "GOTHIC.DAT";
     //end = "PARTICLEFX.DAT";
     auto pos = file.size() - end.size();
-    bool endsWith = end.size() <= file.size() && file.find(end, pos) != std::string::npos;
+    bool endsWith = end.size() <= file.size() && file.find(end, pos) != String::npos;
     m_Verbose = endsWith;
      */
     parseFile();
@@ -156,7 +158,7 @@ void DATFile::readSymTable()
 
                 case EParType_String:
                     s.strData.resize(s.properties.elemProps.count);
-                    for(uint32_t j=0;j<s.properties.elemProps.count;j++)
+                    for(uint32_t j = 0; j < s.properties.elemProps.count; j++)
                     {
                         uint8_t b = m_Parser.readBinaryByte();
                         while(b != 0x0A)
@@ -166,15 +168,7 @@ void DATFile::readSymTable()
 
                             b = m_Parser.readBinaryByte();
                         };
-
-                        auto replace = [](std::string& searchSpace, const std::string& from, const std::string& to) {
-                            size_t start_pos = 0;
-                            while((start_pos = searchSpace.find(from, start_pos)) != std::string::npos) {
-                                searchSpace.replace(start_pos, from.length(), to);
-                                start_pos += to.length();
-                            }
-                        };
-                        replace(s.strData[j], "\\n", "\n");
+                        s.strData[j].replace("\\n", "\n");
 
                         if(m_Verbose) LogInfo() << " - String[" << j << "]: " << s.strData[j];
                     }
@@ -226,8 +220,8 @@ void DATFile::readStack()
 
     m_Stack.stackOffset = m_Parser.getSeek();
 
-    std::string ss;
-    std::stringstream sss;
+    String ss;
+    StringStream sss;
 
     size_t seek=0;
     while(m_Parser.getSeek() < m_Parser.getFileSize())
@@ -238,9 +232,7 @@ void DATFile::readStack()
 
         if(m_Verbose)
         {
-            sss.str(std::string());
             sss.clear();
-
             sss << seek << ": " << OP_MAP[s.op];
             ss = sss.str();
         }
@@ -319,7 +311,7 @@ void DATFile::readStack()
     }
 }
 
-std::string Daedalus::eParTypeToString(EParType type)
+String Daedalus::eParTypeToString(EParType type)
 {
     switch (type)
     {
@@ -346,44 +338,35 @@ std::string Daedalus::eParTypeToString(EParType type)
 
 namespace Daedalus
 {
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Npc>() { return IC_Npc; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Mission>() { return IC_Mission; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Info>() { return IC_Info; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Item>() { return IC_Item; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_ItemReact>() { return IC_ItemReact; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Focus>() { return IC_Focus; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Menu>() { return IC_Menu; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Menu_Item>() { return IC_MenuItem; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_SFX>() { return IC_Sfx; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_ParticleFX>() { return IC_Pfx; };
-    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_MusicTheme>() { return IC_MusicTheme; };
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Npc>() { return IC_Npc; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Mission>() { return IC_Mission; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Info>() { return IC_Info; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Item>() { return IC_Item; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_ItemReact>() { return IC_ItemReact; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Focus>() { return IC_Focus; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Menu>() { return IC_Menu; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_Menu_Item>() { return IC_MenuItem; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_SFX>() { return IC_Sfx; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_ParticleFX>() { return IC_Pfx; }
+    template <> EInstanceClass enumFromClass<Daedalus::GEngineClasses::C_MusicTheme>() { return IC_MusicTheme; }
 }
 
-PARSymbol& DATFile::getSymbolByName(const std::string& symName)
+PARSymbol& DATFile::getSymbolByName(const String& symName)
 {
-    std::string n = std::string(symName);
-    std::transform(n.begin(), n.end(), n.begin(), ::toupper);
-    //assert(hasSymbolName(n));
-    if (!hasSymbolName(n)){
+    if (!hasSymbolName(symName)){
         LogWarn() << "symbol " << symName << " not found";
     }
-    return m_SymTable.symbols[m_SymTable.symbolsByName[n]];
+    return m_SymTable.symbols[m_SymTable.symbolsByName[symName.toUpper()]];
 }
 
-bool DATFile::hasSymbolName(const std::string& symName)
+bool DATFile::hasSymbolName(const String& symName)
 {
-    std::string n = std::string(symName);
-    std::transform(n.begin(), n.end(), n.begin(), ::toupper);
-
-    return m_SymTable.symbolsByName.find(n) != m_SymTable.symbolsByName.end();
+    return m_SymTable.symbolsByName.find(symName.toUpper()) != m_SymTable.symbolsByName.end();
 }
 
-size_t DATFile::getSymbolIndexByName(const std::string& symName)
+size_t DATFile::getSymbolIndexByName(const String& symName)
 {
-    std::string n = std::string(symName);
-    std::transform(n.begin(), n.end(), n.begin(), ::toupper);
-
-    return m_SymTable.symbolsByName[n];
+    return m_SymTable.symbolsByName[symName.toUpper()];
 }
 
 PARSymbol& DATFile::getSymbolByIndex(size_t idx)
@@ -488,7 +471,7 @@ size_t DATFile::addSymbol()
     return m_SymTable.symbols.size()-1;
 }
 
-void DATFile::iterateSymbolsOfClass(const std::string& className, std::function<void(size_t, PARSymbol&)> callback)
+void DATFile::iterateSymbolsOfClass(const String& className, std::function<void(size_t, PARSymbol&)> callback)
 {
     // First, find the parent-symbol
     size_t baseSym = getSymbolIndexByName(className);
@@ -521,19 +504,19 @@ namespace Daedalus
 {
     // getDataContainer specializations
     template<>
-    std::vector<int32_t>& PARSymbol::getDataContainer()
+    std::vector<int32_t> &PARSymbol::getDataContainer()
     {
         return this->intData;
     }
 
     template<>
-    std::vector<float>& PARSymbol::getDataContainer()
+    std::vector<float> &PARSymbol::getDataContainer()
     {
         return this->floatData;
     }
 
     template<>
-    std::vector<std::string>& PARSymbol::getDataContainer()
+    std::vector<String> &PARSymbol::getDataContainer()
     {
         return this->strData;
     }
@@ -544,8 +527,8 @@ int32_t& PARSymbol::getInt(size_t idx, void *baseAddr)
     return getValue<int32_t>(idx, baseAddr);
 }
 
-std::string& PARSymbol::getString(size_t idx, void *baseAddr) {
-    return getValue<std::string>(idx, baseAddr);
+String& PARSymbol::getString(size_t idx, void *baseAddr) {
+    return getValue<Utils::BasicString<char>>(idx, baseAddr);
 }
 
 float &PARSymbol::getFloat(size_t idx, void *baseAddr) {

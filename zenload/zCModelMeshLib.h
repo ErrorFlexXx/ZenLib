@@ -4,6 +4,7 @@
 #include "utils/mathlib.h"
 #include "zTypes.h"
 #include "zCMeshSoftSkin.h"
+#include <utils/string.h>
 
 namespace VDFS
 {
@@ -20,7 +21,7 @@ namespace ZenLoad
         bool parentValid() const { return parentIndex != 0xFFFF; }
 
         uint16_t parentIndex;
-        std::string name;
+        Utils::String name;
         ZMath::Matrix transformLocal;
         ZMath::Matrix transformBindPoseDebug; // "Global"
 
@@ -42,7 +43,7 @@ namespace ZenLoad
         /**
          * @brief Loads the mesh from the given VDF-Archive
          */
-        zCModelMeshLib(const std::string &fileName, const VDFS::FileIndex &fileIndex, float scale = 1.0f);
+        zCModelMeshLib(const Utils::String &fileName, const VDFS::FileIndex &fileIndex, float scale = 1.0f);
 
         /**
          * @brief Reads the mesh-object from the given binary stream
@@ -78,7 +79,7 @@ namespace ZenLoad
         /**
          * @return List of attached meshes
          */
-        const std::vector<std::pair<std::string, zCProgMeshProto>> &getAttachments() const { return m_NodeAttachments; }
+        const std::vector<std::pair<Utils::String, zCProgMeshProto>> &getAttachments() const { return m_NodeAttachments; }
 
         /**
          * @return Checksum for this node hierachy
@@ -88,7 +89,7 @@ namespace ZenLoad
         /**
          * @return The index of the node with the given name
          */
-        size_t findNodeIndex(const std::string &nodeName) const;
+        size_t findNodeIndex(const Utils::String &nodeName) const;
 
         /**
          * @return Whether this was loaded correctly
@@ -118,7 +119,7 @@ namespace ZenLoad
         /**
          * @brief Node-Attachments
          */
-        std::vector<std::pair<std::string, zCProgMeshProto>> m_NodeAttachments;
+        std::vector<std::pair<Utils::String, zCProgMeshProto>> m_NodeAttachments;
 
         /**
          * @brief Model hierachy

@@ -8,8 +8,9 @@
 #include <algorithm>
 
 using namespace ZenLoad;
+using namespace Utils;
 
-zCCSLib::zCCSLib(const std::string &fileName, const VDFS::FileIndex &fileIndex)
+zCCSLib::zCCSLib(const String &fileName, const VDFS::FileIndex &fileIndex)
 {
     std::vector<uint8_t> data;
     fileIndex.getFileData(fileName, data);
@@ -33,7 +34,7 @@ zCCSLib::zCCSLib(const std::string &fileName, const VDFS::FileIndex &fileIndex)
 }
 
 
-zCCSLib::zCCSLib(const std::string &file)
+zCCSLib::zCCSLib(const String &file)
 {
     try
     {
@@ -119,27 +120,20 @@ void zCCSLib::readObjectData(ZenParser &parser)
 
         info.blocks.push_back(blk.atomicBlockData);
 
-        auto nameUppered = blk.blockName;
-        std::transform(nameUppered.begin(), nameUppered.end(), nameUppered.begin(), ::toupper);
         //LogInfo() << "message = " << blk.blockName;
-        m_MessagesByName[nameUppered] = info.blocks.size() - 1;
+        m_MessagesByName[String(blk.blockName).toUpper()] = info.blocks.size() - 1;
     }
-
 }
 
-const oCMsgConversationData& zCCSLib::getMessageByName(const std::string &name)
+const oCMsgConversationData& zCCSLib::getMessageByName(const String &name)
 {
-    auto nameUppered = name;
-    std::transform(nameUppered.begin(), nameUppered.end(), nameUppered.begin(), ::toupper);
+    auto nameUppered = name.toUpper();
     assert(m_MessagesByName.find(nameUppered) != m_MessagesByName.end());
     size_t idx = m_MessagesByName[nameUppered];
     return m_Data.blocks[idx].command;
 }
 
-bool zCCSLib::messageExists(const std::string &name) const
+bool zCCSLib::messageExists(const String &name) const
 {
-    auto nameUppered = name;
-    std::transform(nameUppered.begin(), nameUppered.end(), nameUppered.begin(), ::toupper);
-    return m_MessagesByName.find(nameUppered) != m_MessagesByName.end();
+    return m_MessagesByName.find(name.toUpper()) != m_MessagesByName.end();
 }
-

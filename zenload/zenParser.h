@@ -4,9 +4,10 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "utils/mathlib.h"
-#include "utils/tuple.h"
-#include "utils/split.h"
+#include <utils/mathlib.h>
+#include <utils/tuple.h>
+#include <utils/split.h>
+#include <utils/string.h>
 #include "zTypes.h"
 
 namespace VDFS
@@ -47,8 +48,8 @@ namespace ZenLoad
             uint32_t size;
             uint16_t version;
             uint32_t objectID;
-            std::string name;
-            std::string classname;
+            Utils::String name;
+            Utils::String classname;
             bool createObject;
         };
 
@@ -60,8 +61,8 @@ namespace ZenLoad
             int version;
             EFileType fileType;
             bool saveGame;
-            std::string date;
-            std::string user;
+            Utils::String date;
+            Utils::String user;
             int objectCount;
 
             struct {
@@ -73,8 +74,8 @@ namespace ZenLoad
         /**
          * @brief reads a zen from a file
          */
-        ZenParser(const std::string &file);
-        ZenParser(const std::string &file, const VDFS::FileIndex &vdfs);
+        ZenParser(const Utils::String &file);
+        ZenParser(const Utils::String &file, const VDFS::FileIndex &vdfs);
 
         /**
          * @brief reads a zen from memory
@@ -136,12 +137,12 @@ namespace ZenLoad
         /**
          * @brief Reads a line to \r or \n
          */
-        std::string readLine(bool skipSpaces = true);
+        Utils::String readLine(bool skipSpaces = true);
 
         /**
          * @brief skips a string and checks if it matches the given expected one
          */
-        bool skipString(const std::string &pattern = std::string());
+        bool skipString(const Utils::String &pattern = Utils::String());
 
         /**
          * @brief Skips all whitespace-characters until it hits a non-whitespace one
@@ -161,7 +162,7 @@ namespace ZenLoad
         /**
          * @brief Reads a string until \r, \n or a space is found
          */
-        std::string readString(bool skipSpaces = true);
+        Utils::String readString(bool skipSpaces = true);
 
         /**
          * @brief reads an ASCII datatype from the loaded file
@@ -170,12 +171,7 @@ namespace ZenLoad
         bool readBoolASCII();
 
         /**
-         * @brief returns whether the given string is a number
-         */
-        bool isNumber(const std::string &expr);
-
-        /**
-         * @brief returns the current implementatio
+         * @brief returns the current implementation
          */
         ParserImpl *getImpl() { return m_pParserImpl; }
         void setImpl(ParserImpl *impl) { m_pParserImpl = impl; }
@@ -246,7 +242,7 @@ namespace ZenLoad
         /**
          * @brief Read the given file and places the data in the given vector
          */
-        bool readFile(const std::string &file, std::vector<uint8_t> &data);
+        bool readFile(const Utils::String &file, std::vector<uint8_t> &data);
 
         /**
          * @brief Implementation this archive usese

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <utils/string.h>
 #include <zenload/zCModelAni.h>
 #include <zenload/zCModelScript.h>
 
@@ -155,14 +155,14 @@ namespace ZenLoad
         {
             TokenType type = TokenText;
             unsigned line = 0;
-            std::string text;
+            Utils::String text;
         };
 
         Token m_Token;
         Token m_NextToken;
         unsigned m_Line = 1;
 
-        std::vector<std::string> m_Args;
+        std::vector<Utils::String> m_Args;
         unsigned m_ArgCount = 0;
 
         std::vector<Context> m_Context;

@@ -1,15 +1,15 @@
 #pragma once
-#include <string>
+
 #include <vector>
 #include <map>
 #include <zenload/zenParser.h>
 #include <utils/staticReferencedAllocator.h>
 #include <utils/logger.h>
+#include <utils/string.h>
 #include <daedalus/DaedalusStdlib.h>
 
 namespace Daedalus
 {
-
 	enum EInstanceClass
 	{
 		IC_Npc,
@@ -117,7 +117,7 @@ namespace Daedalus
     	EParOp_PushArrayVar    = 245   // EParOp_PushVar + EParOp_Array
     };
 
-	std::string eParTypeToString(EParType type);
+    Utils::String eParTypeToString(EParType type);
 
     struct PARSymbol
     {
@@ -134,54 +134,55 @@ namespace Daedalus
             parent = 0xFFFFFFFF;
 		}
 
-        std::string name;
+        Utils::String name;
 
         struct Properties
         {
             int32_t  offClsRet;  // Offset (ClassVar) | Size (Class) | ReturnType (Func)
-            struct {
+            struct
+            {
                 uint32_t count : 12; // Count:12, Type:4 (EParType_), Flags:6 (EParFlag_), Space: 1, Reserved:9
                 uint32_t type  : 4; // EParType_*
                 uint32_t flags : 6; // EParFlag_*
                 uint32_t space: 1;
                 uint32_t reserved : 9;
-            }elemProps;
+            } elemProps;
 
             struct
             {
                 uint32_t value : 19;  // Value:19, Reserved:13
                 uint32_t reserved : 13;
-            }fileIndex;
+            } fileIndex;
 
             struct
             {
                 uint32_t value : 19;  // Value:19, Reserved:13
                 uint32_t reserved : 13;
-            }lineStart;
+            } lineStart;
 
             struct
             {
                 uint32_t value : 19;  // Value:19, Reserved:13
                 uint32_t reserved : 13;
-            }lineCount;
+            } lineCount;
 
             struct
             {
                 uint32_t value : 24;  // Value:24, Reserved:8
                 uint32_t reserved : 8;
-            }charStart;
+            } charStart;
 
             struct
             {
                 uint32_t value : 24;  // Value:24, Reserved:8
                 uint32_t reserved : 8;
-            }charCount;
+            } charCount;
 
         } properties;
 
 		bool hasEParFlag(EParFlag eParFlag)
 		{
-			return static_cast<bool>(properties.elemProps.flags & eParFlag);
+            return static_cast<bool>(properties.elemProps.flags &eParFlag);
 		}
 
 		bool isEParType(EParType eParType)
@@ -191,7 +192,7 @@ namespace Daedalus
 
         std::vector<float> floatData;
         std::vector<int32_t> intData;
-        std::vector<std::string> strData;
+        std::vector<Utils::String> strData;
         int32_t classOffset;
         uint32_t address;
 
@@ -215,9 +216,9 @@ namespace Daedalus
             return reinterpret_cast<T*>(reinterpret_cast<char*>(baseAddr) + classMemberOffset);
         }
 
-		int32_t& getInt(size_t idx = 0, void* baseAddr=nullptr);
-        std::string& getString(size_t idx = 0, void* baseAddr=nullptr);
-        float& getFloat(size_t idx = 0, void* baseAddr=nullptr);
+        int32_t& getInt(size_t idx = 0, void *baseAddr=nullptr);
+        Utils::String& getString(size_t idx = 0, void *baseAddr=nullptr);
+        float& getFloat(size_t idx = 0, void *baseAddr=nullptr);
 
 		template <typename T>
 		std::vector<T>& getDataContainer();
@@ -232,16 +233,20 @@ namespace Daedalus
 				if (!isRegistered)
 				{
 					LogError() << "DaedalusVM: class data member not registered: " << name;
-				} else if (baseAddr == nullptr)
+                }
+                else if (baseAddr == nullptr)
 				{
 					LogError() << "DaedalusVM: base address of C_Class is nullptr: " << name;
-				} else if (idx >= classMemberArraySize){
+                }
+                else if (idx >= classMemberArraySize)
+                {
 					warnIndexOutOfBounds(idx, classMemberArraySize);
 					LogError() << "DaedalusVM: index out of range for registered class data member: " << name;
-				} else {
+                }
+                else
+                {
 					return getClassMember<T>(baseAddr)[idx];
 				}
-				//assert(false);
 			}
 			std::vector<T>& data = getDataContainer<T>();
 			// read from symbol's data if not isClassVar or the above failed. (the latter should not happen)
@@ -279,7 +284,7 @@ namespace Daedalus
     {
         std::vector<uint32_t> sortTable;
         std::vector<PARSymbol> symbols;
-        std::unordered_map<std::string, size_t> symbolsByName;
+        std::unordered_map<Utils::String, size_t> symbolsByName;
         std::unordered_map<size_t, size_t> functionsByAddress;
     };
 
@@ -306,14 +311,14 @@ namespace Daedalus
 
 	struct PARInstance
 	{
-		std::map<std::string, uint32_t> symbolsByName;
+        std::map<Utils::String, uint32_t> symbolsByName;
 	};
 
     class DATFile
     {
     public:
 		DATFile();
-        DATFile(const std::string& file, bool verbose=false);
+        DATFile(const Utils::String& file, bool verbose=false);
         DATFile(const uint8_t* pData, size_t numBytes, bool verbose=false);
 
         void parseFile();
@@ -321,14 +326,14 @@ namespace Daedalus
 		/**
 		 * @return True, when a symbol with the given name exists
 		 */
-		bool hasSymbolName(const std::string& symName);
+        bool hasSymbolName(const Utils::String& symName);
 
 		/**
 		 * @return The symbol connected to the given name
 		 */
-		PARSymbol& getSymbolByName(const std::string& symName);
-		size_t getSymbolIndexByName(const std::string& symName);
-		PARSymbol& getSymbolByIndex(size_t idx);
+        PARSymbol &getSymbolByName(const Utils::String &symName);
+        size_t getSymbolIndexByName(const Utils::String &symName);
+        PARSymbol &getSymbolByIndex(size_t idx);
 
 		/**
 		 * @return Function symbol index that points to the given address. returns -1 if address was not found
@@ -337,7 +342,7 @@ namespace Daedalus
 		/**
 		 * Goes through all symbols and calls the given callback for every instance of the specified class
 		 */
-		void iterateSymbolsOfClass(const std::string& className, std::function<void(size_t, PARSymbol&)> callback);
+        void iterateSymbolsOfClass(const Utils::String& className, std::function<void(size_t, PARSymbol&)> callback);
 
 		/**
 		 * @return Object containing information about the opcode currently on the stack
@@ -386,7 +391,7 @@ namespace Daedalus
          * @param member this variable reference must be a member of the given obj
          */
         template<class C_Class, class MemberClass>
-        void registerMember(const std::string& symbolName, const C_Class& obj, const MemberClass& member, bool checkIfExists = false){
+        void registerMember(const Utils::String& symbolName, const C_Class& obj, const MemberClass& member, bool checkIfExists = false){
 			if (checkIfExists && !hasSymbolName(symbolName))
                 return;
             auto& parSymbol = getSymbolByName(symbolName);

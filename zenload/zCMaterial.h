@@ -3,6 +3,7 @@
 #include "zTypes.h"
 #include "zenParser.h"
 #include "zenParserPropRead.h"
+#include <utils/string.h>
 
 namespace ZenLoad
 {
@@ -18,7 +19,7 @@ namespace ZenLoad
         NUM_MAT_GROUPS
     };
 
-    static const std::string MaterialGroupNames[(int)MaterialGroup::NUM_MAT_GROUPS] = {
+    static const Utils::String MaterialGroupNames[(int)MaterialGroup::NUM_MAT_GROUPS] = {
             "UNDEF",
             "METAL",
             "STONE",
@@ -34,7 +35,7 @@ namespace ZenLoad
         /**
          * Converts the given material-group enum value to the regarding string
          */
-        static std::string getMatGroupString(MaterialGroup group)
+        static Utils::String getMatGroupString(MaterialGroup group)
         {
             if((int)group >= (int)MaterialGroup::NUM_MAT_GROUPS)
             {

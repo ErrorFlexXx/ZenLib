@@ -1,8 +1,9 @@
-#include <algorithm>
 #include "parserImplASCII.h"
+//#include <algorithm>
 #include "utils/logger.h"
 
 using namespace ZenLoad;
+using namespace Utils;
 
 ParserImplASCII::ParserImplASCII(ZenParser *parser)
     : ParserImpl(parser)
@@ -47,12 +48,12 @@ bool ParserImplASCII::readChunkStart(ZenParser::ChunkHeader &header)
         header.startPosition = m_pParser->m_Seek;
 
         // Parse chunk-header
-        std::string vobDescriptor(reinterpret_cast<char *>(&m_pParser->m_Data[m_pParser->m_Seek]), tmpSeek - m_pParser->m_Seek);
-        std::vector<std::string> vec = Utils::split(vobDescriptor, ' ');
+        String vobDescriptor(reinterpret_cast<char *>(&m_pParser->m_Data[m_pParser->m_Seek]), tmpSeek - m_pParser->m_Seek);
+        std::vector<String> vec = vobDescriptor.split(" ");
         m_pParser->m_Seek = tmpSeek + 1;
 
-        std::string name;
-        std::string className;
+        String name;
+        String className;
         int classVersion = 0;
         int objectID = 0;
         bool createObject = false;
@@ -93,7 +94,7 @@ bool ParserImplASCII::readChunkStart(ZenParser::ChunkHeader &header)
                     else
                         createObject = true;
                 case S_CLASS_NAME:
-                    if(!m_pParser->isNumber(arg))
+                    if(!arg.isNumber())
                     {
                         className = arg;
                         state = S_CLASS_VERSION;
@@ -142,7 +143,7 @@ bool ParserImplASCII::readChunkEnd()
     size_t seek = m_pParser->getSeek();
 
     m_pParser->skipSpaces();
-    std::string l = readString();
+    String l = readString();
 
     if(l != "[]")
     {
@@ -174,7 +175,7 @@ void ParserImplASCII::readImplHeader()
 /**
  * @brief Reads a string
  */
-std::string ParserImplASCII::readString()
+String ParserImplASCII::readString()
 {
     return m_pParser->readLine();
 }
@@ -182,38 +183,37 @@ std::string ParserImplASCII::readString()
 /**
  * @brief Reads data of the expected type. Throws if the read type is not the same as specified and not 0
  */
-void ParserImplASCII::readEntry(const std::string &_expectedName, void *target, size_t targetSize, EZenValueType expectedType)
+void ParserImplASCII::readEntry(const String &_expectedName, void *target, size_t targetSize, EZenValueType expectedType)
 {
     // Some tools write
-    std::string expectedName = _expectedName;
-    std::transform(expectedName.begin(), expectedName.end(),expectedName.begin(), ::toupper);
+    String expectedName = _expectedName;
+    expectedName = expectedName.toUpper();
 
     m_pParser->skipSpaces();
-    std::string line = m_pParser->readLine();
+    String line = m_pParser->readLine();
 
     // Special cases for chunk starts/ends
     if(line == "[]" || (line.front() == '[' && line.back() == ']'))
     {
-        *reinterpret_cast<std::string*>(target) = line;
+        *reinterpret_cast<String*>(target) = line;
         return;
     }
 
     // Split at =, then at :
     // parts should then have 3 elements, name, type and value
-    auto parts = Utils::split(line, "=:");
+    auto parts = line.split("=:");
 
     if(parts.size() < 2)
         throw std::runtime_error("Failed to parse property: " + expectedName);
 
-    std::string valueName = parts[0];
-    std::transform(valueName.begin(), valueName.end(),valueName.begin(), ::toupper);
+    String valueName = parts[0].toUpper();
 
-    //const std::string& valueName = parts[0];
-    const std::string& type = parts[1];
-    const std::string& value = parts.size() > 2 ? parts[2] : "";
+    //const String& valueName = parts[0];
+    const String& type = parts[1];
+    const String& value = parts.size() > 2 ? parts[2] : "";
 
     // Split value as well, if possible
-    auto vparts = Utils::split(value, ' ');
+    auto vparts = value.split(' ');
 
     if(!expectedName.empty() && valueName != expectedName)
         throw std::runtime_error("Value name does not match expected name. Value:" + valueName + " Expected: " + expectedName);
@@ -221,7 +221,7 @@ void ParserImplASCII::readEntry(const std::string &_expectedName, void *target, 
     switch(expectedType)
     {
         case ZVT_0: break;
-        case ZVT_STRING: *reinterpret_cast<std::string*>(target) = value; break;
+        case ZVT_STRING: *reinterpret_cast<String*>(target) = value; break;
         case ZVT_INT: *reinterpret_cast<int32_t*>(target) = std::stoi(value); break;
         case ZVT_FLOAT: *reinterpret_cast<float*>(target) = std::stof(value); break;
         case ZVT_BYTE: *reinterpret_cast<uint8_t*>(target) = static_cast<uint8_t>(std::stoi(value)); break;
@@ -259,7 +259,7 @@ void ParserImplASCII::readEntry(const std::string &_expectedName, void *target, 
 
                 c[0] = value[i * 2];
                 c[1] = value[i * 2 + 1];
-                data[i] = static_cast<uint8_t>(std::stoi(std::string(c), 0, 16));
+                data[i] = static_cast<uint8_t>(std::stoi(String(c), 0, 16));
             }
             break;
         }
@@ -279,7 +279,7 @@ void ParserImplASCII::readEntry(const std::string &_expectedName, void *target, 
 void ParserImplASCII::readEntryType(EZenValueType &outtype, size_t &size)
 {
     m_pParser->skipSpaces();
-    std::string line = m_pParser->readLine();
+    String line = m_pParser->readLine();
 
     // Special cases for chunk starts/ends
     if(line == "[]" || (line.front() == '[' && line.back() == ']'))
@@ -291,13 +291,13 @@ void ParserImplASCII::readEntryType(EZenValueType &outtype, size_t &size)
 
     // Split at =, then at :
     // parts should then have 3 elements, name, type and value
-    auto parts = Utils::split(line, "=:");
+    auto parts = line.split("=:");
 
     if(parts.size() < 2) // Need at least name and type
         throw std::runtime_error("Failed to read property type");
 
-    const std::string& type = parts[1];
-    size_t cLoc = line.find_first_of(':') == std::string::npos ? 0 : line.find_first_of(':');
+    const String& type = parts[1];
+    size_t cLoc = line.find_first_of(':') == String::npos ? 0 : line.find_first_of(':');
 
     if(type == "string") { outtype = ZVT_STRING; size = 0; }
     else if(type == "int") { outtype = ZVT_INT; size = 0; }
