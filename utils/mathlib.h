@@ -1,16 +1,16 @@
 #pragma once
+
 #include <string.h>
 #include <iostream>
 #include <string>
 
 namespace ZMath
 {    
-	static const float Pi = 3.14159265359f;
-
+    static const float Pi = 3.14159265359f;
 
     constexpr int64_t ipow(int64_t base, int exp, int64_t result = 1)
     {
-      return exp < 1 ? result : ipow(base * base, exp / 2, (exp % 2) ? result * base : result);
+        return exp < 1 ? result : ipow(base * base, exp / 2, (exp % 2) ? result * base : result);
     }
 
     struct t_float2
@@ -33,16 +33,16 @@ namespace ZMath
             float v[2];
         };
 
-		std::string toString() const
-		{
-			std::string out;
-			out = "[" + std::to_string(x)
-				+ ", " + std::to_string(y) + "]";
+        std::string toString() const
+        {
+            std::string out;
+            out = "[" + std::to_string(x)
+                    + ", " + std::to_string(y) + "]";
 
-			return out;
-		}
+            return out;
+        }
 
-		friend std::ostream& operator<< (std::ostream &out, t_float2 &v);
+        friend std::ostream& operator<< (std::ostream &out, t_float2 &v);
     };
 
     std::ostream& operator<< (std::ostream &out, t_float2 &v);
@@ -70,17 +70,17 @@ namespace ZMath
             float v[3];
         };
 
-		std::string toString() const
-		{
-			std::string out;
-			out = "[" + std::to_string(x)
-				+ ", " + std::to_string(y)
-				+ ", " + std::to_string(z) + "]";
+        std::string toString() const
+        {
+            std::string out;
+            out = "[" + std::to_string(x)
+                    + ", " + std::to_string(y)
+                    + ", " + std::to_string(z) + "]";
 
-			return out;
-		}
+            return out;
+        }
 
-		friend std::ostream& operator<< (std::ostream &out, t_float3 &v);
+        friend std::ostream& operator<< (std::ostream &out, t_float3 &v);
     };
 
     std::ostream& operator<< (std::ostream &out, t_float3 &v);
@@ -88,13 +88,13 @@ namespace ZMath
     struct t_float4
     {
         t_float4(){}
-		t_float4(float x, float y, float z, float w)
-		{
-			this->x = x;
-			this->y = y;
-			this->z = z;
-			this->w = w;
-		}
+        t_float4(float x, float y, float z, float w)
+        {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+            this->w = w;
+        }
 
         union
         {
@@ -106,51 +106,51 @@ namespace ZMath
                 float w;
             };
 
-	    float v[4];
+            float v[4];
 
         };
 
-		/**
-		 * @brief Converts the given ABGR8-Color to float4
-		 */
-		void fromABGR8(uint32_t argb)
-		{
-			unsigned char a = argb >> 24;
-			unsigned char b = (argb >> 16) & 0xFF;
-			unsigned char g = (argb >> 8) & 0xFF;
-			unsigned char r = argb & 0xFF;
+        /**
+         * @brief Converts the given ABGR8-Color to float4
+         */
+        void fromABGR8(uint32_t argb)
+        {
+            unsigned char a = argb >> 24;
+            unsigned char b = (argb >> 16) & 0xFF;
+            unsigned char g = (argb >> 8) & 0xFF;
+            unsigned char r = argb & 0xFF;
 
-			x = r / 255.0f;
-			y = g / 255.0f;
-			z = b / 255.0f;
-			w = a / 255.0f;
-		}
+            x = r / 255.0f;
+            y = g / 255.0f;
+            z = b / 255.0f;
+            w = a / 255.0f;
+        }
 
-		/**
-		* @brief Converts the stored color to ARGB8
-		*/
-		uint32_t toABGR8()
-		{
-			unsigned char b[] = { static_cast<unsigned char>(w * 255.0f), 
-				static_cast<unsigned char>(z * 255.0f), 
-				static_cast<unsigned char>(y * 255.0f),
-				static_cast<unsigned char>(x * 255.0f)};
+        /**
+        * @brief Converts the stored color to ARGB8
+        */
+        uint32_t toABGR8()
+        {
+            unsigned char b[] = { static_cast<unsigned char>(w * 255.0f),
+                                  static_cast<unsigned char>(z * 255.0f),
+                                  static_cast<unsigned char>(y * 255.0f),
+                                  static_cast<unsigned char>(x * 255.0f)};
 
-			return *reinterpret_cast<uint32_t*>(b);
-		}
+            return *reinterpret_cast<uint32_t*>(b);
+        }
 
-		std::string toString() const
-		{
-			std::string out;
-			out = "[" + std::to_string(x)
-				+ ", " + std::to_string(y)
-				+ ", " + std::to_string(z)
-				+ ", " + std::to_string(w) + "]";
+        std::string toString() const
+        {
+            std::string out;
+            out = "[" + std::to_string(x)
+                    + ", " + std::to_string(y)
+                    + ", " + std::to_string(z)
+                    + ", " + std::to_string(w) + "]";
 
-			return out;
-		}
+            return out;
+        }
 
-		friend std::ostream& operator<< (std::ostream &out, t_float4 &v);
+        friend std::ostream& operator<< (std::ostream &out, t_float4 &v);
     };
 
     std::ostream& operator<< (std::ostream &out, t_float4 &v);
@@ -181,7 +181,8 @@ namespace ZMath
         {
             t_vector<T,S...> rs;
 
-            for(size_t i=0;i<sizeof(T) / sizeof(float);i++) // Fixme: Doesn't work for double-vectors! Also, not very nice solution.
+            // FIXME: Doesn't work for double-vectors! Also, not very nice solution.
+            for(size_t i = 0; i < sizeof(T) / sizeof(float); i++)
             {
                 rs.v[i] = T::v[i] * s;
             }
@@ -197,21 +198,23 @@ namespace ZMath
     typedef t_vector<t_float3, float, float, float> float3;
     typedef t_vector<t_float4, float, float, float, float> float4;
 
-    //------------------------------------------------------------------------------
-    // 4x4 Matrix (assumes right-handed cooordinates)
+    /**
+     * @brief The Matrix struct
+     *        Assumes right-handed coordinates.
+     */
     struct Matrix
     {
         Matrix(){}
 
-		Matrix(float* pm)
-		{
-			memcpy(m, pm, sizeof(m));
-		}
+        Matrix(float* pm)
+        {
+            memcpy(m, pm, sizeof(m));
+        }
 
         Matrix(float m00, float m01, float m02, float m03,
-            float m10, float m11, float m12, float m13,
-            float m20, float m21, float m22, float m23,
-            float m30, float m31, float m32, float m33)
+               float m10, float m11, float m12, float m13,
+               float m20, float m21, float m22, float m23,
+               float m30, float m31, float m32, float m33)
         {
             m[0][0] = m00;
             m[0][1] = m01;
@@ -281,10 +284,10 @@ namespace ZMath
 
         static Matrix CreateIdentity()
         {
-                return Matrix(1,0,0,0,
-                                       0,1,0,0,
-                                       0,0,1,0,
-                                       0,0,0,1);
+            return Matrix(1,0,0,0,
+                          0,1,0,0,
+                          0,0,1,0,
+                          0,0,0,1);
         }
         
         union
@@ -296,29 +299,29 @@ namespace ZMath
                 float _31, _32, _33, _34;
                 float _41, _42, _43, _44;
             };
-		float m[4][4];
-		float4 v[4];
-                float mv[16];
+            float m[4][4];
+            float4 v[4];
+            float mv[16];
         };
 
-		std::string toString()
-		{
-			std::string out;
-			out = "[";
-			for(size_t i = 0; i < 16; i++)
-			{
-				out += std::to_string(mv[i]);
+        std::string toString()
+        {
+            std::string out;
+            out = "[";
+            for(size_t i = 0; i < 16; i++)
+            {
+                out += std::to_string(mv[i]);
 
-				// Only add "," when not at the last value
-				if(i != 15)
-					out += ", ";
-			}
-			out += "]";
+                // Only add "," when not at the last value
+                if(i != 15)
+                    out += ", ";
+            }
+            out += "]";
 
-			return out;
-		}
+            return out;
+        }
 
-		friend std::ostream& operator<< (std::ostream &out, Matrix &v);
+        friend std::ostream& operator<< (std::ostream &out, Matrix &v);
     };
 
 

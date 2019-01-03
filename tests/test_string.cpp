@@ -225,3 +225,27 @@ TEST(U32STRING, replaceU32String)
 
     ASSERT_TRUE(test.replace(U" is ", U" might be ").equals(expectedResult));
 }
+
+TEST(STRING, toString)
+{
+    String string = "This is a String.. /";
+    WString wstring = L"This is a String.. /";
+    U16String u16string = u"This is a String.. /";
+    U32String u32string = U"This is a String.. /";
+
+    ASSERT_STREQ(string.c_str(), wstring.toString().c_str());
+    ASSERT_STREQ(string.c_str(), u16string.toString().c_str());
+    ASSERT_STREQ(string.c_str(), u32string.toString().c_str());
+}
+
+TEST(WSTRING, toWString)
+{
+    String string = "This is a String.. /";
+    WString wstring = L"This is a String.. /";
+    U16String u16string = u"This is a String.. /";
+    U32String u32string = U"This is a String.. /";
+
+    ASSERT_STREQ(wstring.c_str(), string.toWString().c_str());
+    ASSERT_STREQ(wstring.c_str(), u16string.toWString().c_str());
+    ASSERT_STREQ(wstring.c_str(), u32string.toWString().c_str());
+}

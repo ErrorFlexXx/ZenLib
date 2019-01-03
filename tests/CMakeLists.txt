@@ -33,10 +33,14 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
 
 add_executable(test_vdfs test_vdfs.cpp)
 add_executable(test_string test_string.cpp)
+add_executable(test_path test_path.cpp)
 
 target_link_libraries(test_vdfs gtest vdfs utils)
 target_link_libraries(test_string gtest utils)
+target_link_libraries(test_path gtest vdfs utils)
 
 enable_testing()
 add_test(test_vdfs test_vdfs)
 add_test(test_string test_string)
+add_test(test_path test_path)
+

@@ -1,8 +1,8 @@
 #include "string.h"
 #include "logger.h"
 #include <algorithm>
-#include <locale>
-#include <codecvt>
+#include <locale>  //Converting ...
+#include <codecvt> //Converting ascii, utf16, utf32
 
 using namespace std;
 using namespace Utils;
@@ -48,6 +48,75 @@ BasicString<T> BasicString<T>::toUpper() const
     return tmp;
 }
 
+template <>
+BasicString<char> BasicString<char>::toString() const
+{
+    return *this; //Copy
+}
+
+template <>
+BasicString<char> BasicString<wchar_t>::toString() const
+{
+    setlocale(LC_CTYPE, "");
+    return std::string(this->begin(), this->end()).c_str();
+}
+
+template <>
+BasicString<char> BasicString<char16_t>::toString() const
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    return BasicString<char>(convert.to_bytes(this->c_str()));
+}
+
+template <>
+BasicString<char> BasicString<char32_t>::toString() const
+{
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
+    return BasicString<char>(convert.to_bytes(this->c_str()));
+}
+
+template <>
+BasicString<wchar_t> BasicString<char>::toWString() const
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    return std::wstring(converter.from_bytes(this->c_str()));
+}
+
+template <>
+BasicString<wchar_t> BasicString<wchar_t>::toWString() const
+{
+    return *this;
+}
+
+template <>
+BasicString<wchar_t> BasicString<char16_t>::toWString() const
+{
+    wstring_convert<codecvt_utf16<wchar_t, 0x10ffff, little_endian>, wchar_t> conv;
+    wstring ws = conv.from_bytes(
+                         reinterpret_cast<const char*> (&this->at(0)),
+                         reinterpret_cast<const char*> (&this->at(0) + this->size()));
+    return ws;
+}
+
+template <>
+BasicString<wchar_t> BasicString<char32_t>::toWString() const
+{
+    return this->toString().toWString(); //FIXME: Find a direct way of converting this.
+}
+
+template <>
+BasicString<char> BasicString<char>::fromAsci(const char* str)
+{
+    return String(str);
+}
+
+template <>
+BasicString<wchar_t> BasicString<wchar_t>::fromAsci(const char* str)
+{
+    BasicString<char> conv = str;
+    return conv.toWString();
+}
+
 //Functions injected to std:
 namespace std
 {
@@ -56,8 +125,7 @@ namespace std
      */
     int stoi(const BasicString<char16_t> &str, size_t *&pos, int &base)
     {
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-        return stoi(convert.to_bytes(str.c_str()), pos, base);
+        return stoi(str.toString().c_str(), pos, base);
     }
 
     /**
@@ -65,8 +133,25 @@ namespace std
      */
     int stoi(const BasicString<char32_t> &str, size_t *&pos, int &base)
     {
+        return stoi(str.toString().c_str(), pos, base);
+    }
+
+    /**
+     * @brief stol string to long conversion function for BasicString Utf16.
+     */
+    long stol(const BasicString<char16_t> &str, size_t *&pos, int &base)
+    {
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+        return stol(convert.to_bytes(str.c_str()), pos, base);
+    }
+
+    /**
+     * @brief stol string to long conversion function for BasicString Utf32.
+     */
+    long stol(const BasicString<char32_t> &str, size_t *&pos, int &base)
+    {
         std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
-        return stoi(convert.to_bytes(str.c_str()), pos, base);
+        return stol(convert.to_bytes(str.c_str()), pos, base);
     }
 }
 
@@ -74,6 +159,12 @@ template <class T>
 int BasicString<T>::toInt(size_t *pos, int base) const
 {
     return std::stoi(*this, pos, base);
+}
+
+template <class T>
+long BasicString<T>::toLong(size_t *pos, int base) const
+{
+    return std::stol(*this, pos, base);
 }
 
 template <class T>
@@ -107,15 +198,14 @@ bool BasicString<T>::operator==(const T *rhs) const
 template <class T>
 bool BasicString<T>::contains(const BasicString<T> &search, bool ignoreCase) const
 {
-    BasicString<T> str = *this;
-    BasicString<T> searchStr = search;
-
     if(ignoreCase)
     {
-        str = str.toUpper();
-        searchStr.toUpper();
+        BasicString<T> str       = this->toUpper();
+        BasicString<T> searchStr = search.toUpper();
+
+        return (str.find(searchStr) != BasicString::npos);
     }
-    return (str.find(searchStr) != BasicString::npos);
+    return (this->find(search) != BasicString::npos);
 }
 
 template <class T>
@@ -153,14 +243,18 @@ std::vector<BasicString<T>> BasicString<T>::split(const BasicString<T> &delim) c
 {
     std::vector<BasicString<T>> parts;
     BasicString<T> tmp = *this;
+    size_t index = tmp.find(delim);
 
-    while(auto index = tmp.find(delim) != BasicString::npos) //For every delim found
+    while(index != BasicString<T>::npos)
     {
-        parts.push_back(tmp.substr(0, index));      //Take part up to delim
+        if(index != 0)
+            parts.push_back(tmp.substr(0, index));      //Take part up to delim
         tmp = tmp.substr(index + delim.length());   //Cut off part + delim
+        index = tmp.find(delim);
     }
-    if(0 < tmp.length())
-        parts.push_back(tmp); //Keep last element
+
+    if(!tmp.empty())
+        parts.push_back(tmp);
 
     return parts;
 }

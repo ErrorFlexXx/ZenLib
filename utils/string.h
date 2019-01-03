@@ -50,12 +50,38 @@ namespace Utils
         BasicString toLower() const;
 
         /**
+         * @brief toString converts this string to an ascii string.
+         * @return a String aka BasicString<char>.
+         */
+        BasicString<char> toString() const;
+
+        /**
+         * @brief toWString converts this string to an wide string.
+         * @return a WString aka BasicString<wchar_t>.
+         */
+        BasicString<wchar_t> toWString() const;
+
+        /**
+         * @brief fromAsci sets this string from an ascii input.
+         * @return a reference of this string.
+         */
+        static BasicString<T> fromAsci(const char* str);
+
+        /**
          * @brief toInt casts this string to an integer.
          * @param pos position index to start interpreting at.
          * @param base for the conversion.
          * @return the resulting integer.
          */
         int toInt(size_t *pos = nullptr, int base = 10) const;
+
+        /**
+         * @brief toLong casts this string to a long.
+         * @param pos position index to start interpreting at.
+         * @param base for the conversion.
+         * @return the resulting long.
+         */
+        long toLong(size_t *pos = nullptr, int base = 10) const;
 
         /**
          * @brief isNumber checks, if the current string is a valid number.
